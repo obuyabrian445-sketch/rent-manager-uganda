@@ -635,6 +635,30 @@
       status: "Vacant",
       tenantId: null
     }));
+            const tenants = JSON.parse(
+  localStorage.getItem("tenants") || "[]"
+);
+
+const propertyTenants = tenants.filter(
+  tenant =>
+    tenant.propertyname === property.name &&
+    tenant.status === "Active"
+);
+
+unitList.forEach(function(unit) {
+  const tenant = propertyTenants.find(
+    tenant =>
+      String(tenant.room).padStart(2, "0") === unit.number
+  );
+
+  if (tenant) {
+    unit.status = "Occupied";
+    unit.tenantId = tenant.id || null;
+  } else {
+    unit.status = "Vacant";
+    unit.tenantId = null;
+  }
+});
 
 
             div.innerHTML =
