@@ -628,7 +628,13 @@
                 document.createElement("div");
 
 
-            div.className = "property-card";
+            div.className = "property-card";const unitList = Array.isArray(property.unitList)
+  ? property.unitList
+  : Array.from({ length: Number(property.units) || 0 }, (_, i) => ({
+      number: String(i + 1).padStart(2, "0"),
+      status: "Vacant",
+      tenantId: null
+    }));
 
 
             div.innerHTML =
@@ -647,7 +653,9 @@
 
                 "<p><strong>Units:</strong> " +
                 property.units +
-                "</p>" +
+                "</p>" +"<p><strong>Unit List:</strong> " +
+unitList.map(unit => "Unit " + unit.number + " (" + unit.status + ")").join(", ") +
+"</p>" +
 
                 "<p><strong>Monthly Rent:</strong> UGX " +
                 property.monthlyRent.toLocaleString() +
