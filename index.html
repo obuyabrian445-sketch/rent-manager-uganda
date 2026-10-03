@@ -1,216 +1,881 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Rent Manager Uganda</title>
+    <title>Rent Manager Uganda</title>
 
-        <style>
-            * {
-                  box-sizing: border-box;
-                        margin: 0;
-                              padding: 0;
-                                    font-family: Arial, sans-serif;
-                                        }
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
-                                            body {
-                                                  background: #f4f6f8;
-                                                        color: #1f2937;
-                                                            }
+        body {
+            background: #f4f6f8;
+            color: #1f2937;
+        }
 
-                                                                header {
-                                                                      background: #0b5ed7;
-                                                                            color: white;
-                                                                                  padding: 20px;
-                                                                                        text-align: center;
-                                                                                            }
+        header {
+            background: #0b5ed7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
 
-                                                                                                header h1 {
-                                                                                                      margin-bottom: 8px;
-                                                                                                          }
+        header h1 {
+            margin-bottom: 8px;
+        }
 
-                                                                                                              .container {
-                                                                                                                    max-width: 1100px;
-                                                                                                                          margin: auto;
-                                                                                                                                padding: 20px;
-                                                                                                                                    }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            padding: 20px;
+        }
 
-                                                                                                                                        .welcome {
-                                                                                                                                              background: white;
-                                                                                                                                                    padding: 25px;
-                                                                                                                                                          border-radius: 12px;
-                                                                                                                                                                margin-bottom: 20px;
-                                                                                                                                                                      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                                                                                                                                                                          }
+        .welcome {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
 
-                                                                                                                                                                              .dashboard {
-                                                                                                                                                                                    display: grid;
-                                                                                                                                                                                          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-                                                                                                                                                                                                gap: 15px;
-                                                                                                                                                                                                    }
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
 
-                                                                                                                                                                                                        .card {
-                                                                                                                                                                                                              background: white;
-                                                                                                                                                                                                                    padding: 20px;
-                                                                                                                                                                                                                          border-radius: 12px;
-                                                                                                                                                                                                                                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-                                                                                                                                                                                                                                    }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
 
-                                                                                                                                                                                                                                        .card h3 {
-                                                                                                                                                                                                                                              margin-bottom: 10px;
-                                                                                                                                                                                                                                                  }
+        .card h3 {
+            margin-bottom: 10px;
+        }
 
-                                                                                                                                                                                                                                                      .card p {
-                                                                                                                                                                                                                                                            font-size: 24px;
-                                                                                                                                                                                                                                                                  font-weight: bold;
-                                                                                                                                                                                                                                                                        color: #0b5ed7;
-                                                                                                                                                                                                                                                                            }
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0b5ed7;
+        }
 
-                                                                                                                                                                                                                                                                                .actions {
-                                                                                                                                                                                                                                                                                      margin-top: 25px;
-                                                                                                                                                                                                                                                                                            display: flex;
-                                                                                                                                                                                                                                                                                                  flex-wrap: wrap;
-                                                                                                                                                                                                                                                                                                        gap: 10px;
-                                                                                                                                                                                                                                                                                                            }
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
-                                                                                                                                                                                                                                                                                                                button {
-                                                                                                                                                                                                                                                                                                                      background: #0b5ed7;
-                                                                                                                                                                                                                                                                                                                            color: white;
-                                                                                                                                                                                                                                                                                                                                  border: none;
-                                                                                                                                                                                                                                                                                                                                        padding: 12px 18px;
-                                                                                                                                                                                                                                                                                                                                              border-radius: 8px;
-                                                                                                                                                                                                                                                                                                                                                    cursor: pointer;
-                                                                                                                                                                                                                                                                                                                                                          font-size: 15px;
-                                                                                                                                                                                                                                                                                                                                                              }
+        button {
+            background: #0b5ed7;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                  button:hover {
-                                                                                                                                                                                                                                                                                                                                                                        background: #084298;
-                                                                                                                                                                                                                                                                                                                                                                            }
+        button:hover {
+            background: #084298;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                footer {
-                                                                                                                                                                                                                                                                                                                                                                                      text-align: center;
-                                                                                                                                                                                                                                                                                                                                                                                            padding: 25px;
-                                                                                                                                                                                                                                                                                                                                                                                                  margin-top: 30px;
-                                                                                                                                                                                                                                                                                                                                                                                                        color: #666;
-                                                                                                                                                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                                                                                                                                                              </style>
-                                                                                                                                                                                                                                                                                                                                                                                                              </head>
+        .secondary {
+            background: #198754;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                              <body>
+        .secondary:hover {
+            background: #146c43;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                <header>
-                                                                                                                                                                                                                                                                                                                                                                                                                    <h1>Rent Manager Uganda</h1>
-                                                                                                                                                                                                                                                                                                                                                                                                                        <p>Property & Rent Management System</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                          </header>
+        .danger {
+            background: #dc3545;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                            <main class="container">
+        .danger:hover {
+            background: #bb2d3b;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                <section class="welcome">
-                                                                                                                                                                                                                                                                                                                                                                                                                                      <h2>Welcome to Rent Manager Uganda</h2>
-                                                                                                                                                                                                                                                                                                                                                                                                                                            <p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    Manage properties, tenants, rent payments and rental records
-                                                                                                                                                                                                                                                                                                                                                                                                                                                            from one place.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </section>
+        .section {
+            background: white;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                          <section class="dashboard">
+        .section h2 {
+            margin-bottom: 15px;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div class="card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <h3>Properties</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p>0</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      </div>
+        .tenant-card,
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <div class="card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <h3>Tenants</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <p>0</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </div>
+        .tenant-card h3,
+        .property-card h3 {
+            color: #0b5ed7;
+            margin-bottom: 8px;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <div class="card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <h3>Rent Collected</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <p>UGX 0</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </div>
+        .tenant-card p,
+        .property-card p {
+            margin: 5px 0;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <div class="card">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <h3>Outstanding Rent</h3>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <p>UGX 0</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </div>
+        .empty {
+            color: #777;
+            padding: 10px 0;
+        }
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              </section>
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 30px;
+            color: #666;
+        }
+    </style>
+</head>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  <section class="actions">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <button onclick="addProperty()">Add Property</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              <button onclick="addTenant()">Add Tenant</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <button onclick="recordPayment()">Record Payment</button>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        </section>
+<body>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          </main>
+<header>
+    <h1>Rent Manager Uganda</h1>
+    <p>Property & Rent Management System</p>
+</header>
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            <footer>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <p>© 2026 Rent Manager Uganda</p>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </footer>
+<main class="container">
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    <script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      function addProperty() {
-    const propertyName = prompt("Enter property name:");
-    if (!propertyName) return;
+    <section class="welcome">
+        <h2>Welcome to Rent Manager Uganda</h2>
+        <p>
+            Manage properties, tenants, rent payments and rental records
+            from one place.
+        </p>
+    </section>
 
-    const location = prompt("Enter property location:");
-    if (!location) return;
+    <section class="dashboard">
 
-    const propertyType = prompt("Enter property type (Apartment, House, Hostel, Commercial, Other):");
-    if (!propertyType) return;
+        <div class="card">
+            <h3>Properties</h3>
+            <p id="propertyCount">0</p>
+        </div>
 
-    const units = prompt("Enter number of rental units:");
-    if (!units || isNaN(units)) {
-        alert("Please enter a valid number of units.");
-        return;
+        <div class="card">
+            <h3>Tenants</h3>
+            <p id="tenantCount">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Rent Collected</h3>
+            <p id="rentCollected">UGX 0</p>
+        </div>
+
+        <div class="card">
+            <h3>Outstanding Rent</h3>
+            <p id="outstandingRent">UGX 0</p>
+        </div>
+
+    </section>
+
+    <section class="actions">
+
+        <button onclick="addProperty()">
+            Add Property
+        </button>
+
+        <button onclick="addTenant()" class="secondary">
+            Add Tenant
+        </button>
+
+        <button onclick="recordPayment()">
+            Record Payment
+        </button>
+
+    </section>
+
+    <section class="section">
+
+        <h2>Properties</h2>
+
+        <div id="propertyList">
+            <p class="empty">No properties added yet.</p>
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <h2>Tenants</h2>
+
+        <div id="tenantList">
+            <p class="empty">No tenants added yet.</p>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Rent Manager Uganda</p>
+</footer>
+
+
+<script>
+
+    /* =========================
+       LOAD DASHBOARD
+    ========================= */
+
+    function loadDashboard() {
+
+        const properties =
+            JSON.parse(localStorage.getItem("properties") || "[]");
+
+        const tenants =
+            JSON.parse(localStorage.getItem("tenants") || "[]");
+
+        const payments =
+            JSON.parse(localStorage.getItem("payments") || "[]");
+
+
+        document.getElementById("propertyCount").textContent =
+            properties.length;
+
+        document.getElementById("tenantCount").textContent =
+            tenants.length;
+
+
+        let totalCollected = 0;
+
+        payments.forEach(function(payment) {
+            totalCollected += Number(payment.amount) || 0;
+        });
+
+
+        document.getElementById("rentCollected").textContent =
+            "UGX " + totalCollected.toLocaleString();
+
+
+        let outstanding = 0;
+
+        tenants.forEach(function(tenant) {
+
+            const rent = Number(tenant.monthlyRent) || 0;
+
+            const tenantPayments = payments.filter(function(payment) {
+                return payment.tenantId === tenant.id;
+            });
+
+            let paid = 0;
+
+            tenantPayments.forEach(function(payment) {
+                paid += Number(payment.amount) || 0;
+            });
+
+            if (rent > paid) {
+                outstanding += rent - paid;
+            }
+
+        });
+
+
+        document.getElementById("outstandingRent").textContent =
+            "UGX " + outstanding.toLocaleString();
+
+
+        displayProperties();
+        displayTenants();
     }
 
-    const monthlyRent = prompt("Enter monthly rent per unit in UGX:");
-    if (!monthlyRent || isNaN(monthlyRent)) {
-        alert("Please enter a valid rent amount.");
-        return;
+
+    /* =========================
+       ADD PROPERTY
+    ========================= */
+
+    function addProperty() {
+
+        const propertyName =
+            prompt("Enter property name:");
+
+        if (!propertyName) return;
+
+
+        const location =
+            prompt("Enter property location:");
+
+        if (!location) return;
+
+
+        const propertyType =
+            prompt(
+                "Enter property type (Apartment, House, Hostel, Commercial, Other):"
+            );
+
+        if (!propertyType) return;
+
+
+        const units =
+            prompt("Enter number of rental units:");
+
+        if (!units || isNaN(units)) {
+
+            alert("Please enter a valid number of units.");
+
+            return;
+        }
+
+
+        const monthlyRent =
+            prompt("Enter monthly rent per unit in UGX:");
+
+        if (!monthlyRent || isNaN(monthlyRent)) {
+
+            alert("Please enter a valid rent amount.");
+
+            return;
+        }
+
+
+        const ownerName =
+            prompt("Enter landlord/property owner name:");
+
+        if (!ownerName) return;
+
+
+        const ownerPhone =
+            prompt("Enter landlord phone number:");
+
+        if (!ownerPhone) return;
+
+
+        const property = {
+
+            id: Date.now(),
+
+            name: propertyName,
+
+            location: location,
+
+            type: propertyType,
+
+            units: Number(units),
+
+            monthlyRent: Number(monthlyRent),
+
+            owner: ownerName,
+
+            phone: ownerPhone,
+
+            dateAdded: new Date().toISOString()
+        };
+
+
+        const properties =
+            JSON.parse(localStorage.getItem("properties") || "[]");
+
+
+        properties.push(property);
+
+
+        localStorage.setItem(
+            "properties",
+            JSON.stringify(properties)
+        );
+
+
+        alert(
+            "Property added successfully!\n\n" +
+            "Property: " + property.name + "\n" +
+            "Location: " + property.location + "\n" +
+            "Units: " + property.units + "\n" +
+            "Monthly Rent: UGX " +
+            property.monthlyRent.toLocaleString()
+        );
+
+
+        loadDashboard();
     }
 
-    const ownerName = prompt("Enter landlord/property owner name:");
-    if (!ownerName) return;
 
-    const ownerPhone = prompt("Enter landlord phone number:");
-    if (!ownerPhone) return;
+    /* =========================
+       ADD TENANT
+    ========================= */
 
-    const property = {
-        id: Date.now(),
-        name: propertyName,
-        location: location,
-        type: propertyType,
-        units: Number(units),
-        monthlyRent: Number(monthlyRent),
-        owner: ownerName,
-        phone: ownerPhone,
-        dateAdded: new Date().toISOString()
-    };
+    function addTenant() {
 
-    const properties = JSON.parse(localStorage.getItem("properties") || "[]");
-    properties.push(property);
-    localStorage.setItem("properties", JSON.stringify(properties));
+        const properties =
+            JSON.parse(localStorage.getItem("properties") || "[]");
 
-    alert(
-        "Property added successfully!\n\n" +
-        "Property: " + property.name + "\n" +
-        "Location: " + property.location + "\n" +
-        "Units: " + property.units + "\n" +
-        "Monthly Rent: UGX " + property.monthlyRent.toLocaleString()
-    );
-}
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      function addTenant() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            alert("Tenant management module coming next.");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }
+        if (properties.length === 0) {
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    function recordPayment() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          alert("Rent payment module coming next.");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </script>
+            alert(
+                "Please add a property first before adding a tenant."
+            );
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </body>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
+            return;
+        }
+
+
+        const tenantName =
+            prompt("Enter tenant full name:");
+
+        if (!tenantName) return;
+
+
+        const phone =
+            prompt("Enter tenant phone number:");
+
+        if (!phone) return;
+
+
+        let propertyMessage =
+            "Select property by entering its number:\n\n";
+
+
+        properties.forEach(function(property, index) {
+
+            propertyMessage +=
+                (index + 1) + ". " +
+                property.name +
+                " - " +
+                property.location +
+                "\n";
+
+        });
+
+
+        const propertyChoice =
+            prompt(propertyMessage);
+
+
+        const propertyIndex =
+            Number(propertyChoice) - 1;
+
+
+        if (
+            isNaN(propertyIndex) ||
+            propertyIndex < 0 ||
+            propertyIndex >= properties.length
+        ) {
+
+            alert("Invalid property selection.");
+
+            return;
+        }
+
+
+        const selectedProperty =
+            properties[propertyIndex];
+
+
+        const roomNumber =
+            prompt("Enter room/unit number:");
+
+        if (!roomNumber) return;
+
+
+        const monthlyRent =
+            prompt(
+                "Enter monthly rent for this tenant in UGX:\n" +
+                "Property default rent: UGX " +
+                selectedProperty.monthlyRent.toLocaleString()
+            );
+
+
+        if (!monthlyRent || isNaN(monthlyRent)) {
+
+            alert("Please enter a valid rent amount.");
+
+            return;
+        }
+
+
+        const moveInDate =
+            prompt(
+                "Enter move-in date (YYYY-MM-DD):"
+            );
+
+        if (!moveInDate) return;
+
+
+        const dueDate =
+            prompt(
+                "Enter monthly rent due date (for example 5):"
+            );
+
+        if (!dueDate || isNaN(dueDate)) {
+
+            alert("Please enter a valid due date.");
+
+            return;
+        }
+
+
+        const deposit =
+            prompt("Enter security deposit amount in UGX:");
+
+        if (!deposit || isNaN(deposit)) {
+
+            alert("Please enter a valid deposit amount.");
+
+            return;
+        }
+
+
+        const tenant = {
+
+            id: Date.now(),
+
+            name: tenantName,
+
+            phone: phone,
+
+            propertyId: selectedProperty.id,
+
+            propertyName: selectedProperty.name,
+
+            room: roomNumber,
+
+            monthlyRent: Number(monthlyRent),
+
+            moveInDate: moveInDate,
+
+            dueDate: Number(dueDate),
+
+            deposit: Number(deposit),
+
+            status: "Active",
+
+            dateAdded: new Date().toISOString()
+        };
+
+
+        const tenants =
+            JSON.parse(localStorage.getItem("tenants") || "[]");
+
+
+        tenants.push(tenant);
+
+
+        localStorage.setItem(
+            "tenants",
+            JSON.stringify(tenants)
+        );
+
+
+        alert(
+            "Tenant added successfully!\n\n" +
+            "Tenant: " + tenant.name + "\n" +
+            "Property: " + tenant.propertyName + "\n" +
+            "Room/Unit: " + tenant.room + "\n" +
+            "Monthly Rent: UGX " +
+            tenant.monthlyRent.toLocaleString()
+        );
+
+
+        loadDashboard();
+    }
+
+
+    /* =========================
+       DISPLAY PROPERTIES
+    ========================= */
+
+    function displayProperties() {
+
+        const properties =
+            JSON.parse(localStorage.getItem("properties") || "[]");
+
+
+        const container =
+            document.getElementById("propertyList");
+
+
+        if (properties.length === 0) {
+
+            container.innerHTML =
+                '<p class="empty">No properties added yet.</p>';
+
+            return;
+        }
+
+
+        container.innerHTML = "";
+
+
+        properties.forEach(function(property) {
+
+            const div =
+                document.createElement("div");
+
+
+            div.className = "property-card";
+
+
+            div.innerHTML =
+
+                "<h3>" +
+                property.name +
+                "</h3>" +
+
+                "<p><strong>Location:</strong> " +
+                property.location +
+                "</p>" +
+
+                "<p><strong>Type:</strong> " +
+                property.type +
+                "</p>" +
+
+                "<p><strong>Units:</strong> " +
+                property.units +
+                "</p>" +
+
+                "<p><strong>Monthly Rent:</strong> UGX " +
+                property.monthlyRent.toLocaleString() +
+                "</p>" +
+
+                "<p><strong>Owner:</strong> " +
+                property.owner +
+                "</p>" +
+
+                "<p><strong>Phone:</strong> " +
+                property.phone +
+                "</p>";
+
+
+            container.appendChild(div);
+
+        });
+    }
+
+
+    /* =========================
+       DISPLAY TENANTS
+    ========================= */
+
+    function displayTenants() {
+
+        const tenants =
+            JSON.parse(localStorage.getItem("tenants") || "[]");
+
+
+        const container =
+            document.getElementById("tenantList");
+
+
+        if (tenants.length === 0) {
+
+            container.innerHTML =
+                '<p class="empty">No tenants added yet.</p>';
+
+            return;
+        }
+
+
+        container.innerHTML = "";
+
+
+        tenants.forEach(function(tenant) {
+
+            const div =
+                document.createElement("div");
+
+
+            div.className = "tenant-card";
+
+
+            div.innerHTML =
+
+                "<h3>" +
+                tenant.name +
+                "</h3>" +
+
+                "<p><strong>Phone:</strong> " +
+                tenant.phone +
+                "</p>" +
+
+                "<p><strong>Property:</strong> " +
+                tenant.propertyName +
+                "</p>" +
+
+                "<p><strong>Room/Unit:</strong> " +
+                tenant.room +
+                "</p>" +
+
+                "<p><strong>Monthly Rent:</strong> UGX " +
+                tenant.monthlyRent.toLocaleString() +
+                "</p>" +
+
+                "<p><strong>Move-in Date:</strong> " +
+                tenant.moveInDate +
+                "</p>" +
+
+                "<p><strong>Rent Due Day:</strong> " +
+                tenant.dueDate +
+                "</p>" +
+
+                "<p><strong>Deposit:</strong> UGX " +
+                tenant.deposit.toLocaleString() +
+                "</p>" +
+
+                "<p><strong>Status:</strong> " +
+                tenant.status +
+                "</p>";
+
+
+            container.appendChild(div);
+
+        });
+    }
+
+
+    /* =========================
+       RECORD PAYMENT
+    ========================= */
+
+    function recordPayment() {
+
+        const tenants =
+            JSON.parse(localStorage.getItem("tenants") || "[]");
+
+
+        if (tenants.length === 0) {
+
+            alert(
+                "Please add a tenant first before recording a payment."
+            );
+
+            return;
+        }
+
+
+        let tenantMessage =
+            "Select tenant by entering their number:\n\n";
+
+
+        tenants.forEach(function(tenant, index) {
+
+            tenantMessage +=
+                (index + 1) +
+                ". " +
+                tenant.name +
+                " - Room " +
+                tenant.room +
+                "\n";
+
+        });
+
+
+        const tenantChoice =
+            prompt(tenantMessage);
+
+
+        const tenantIndex =
+            Number(tenantChoice) - 1;
+
+
+        if (
+            isNaN(tenantIndex) ||
+            tenantIndex < 0 ||
+            tenantIndex >= tenants.length
+        ) {
+
+            alert("Invalid tenant selection.");
+
+            return;
+        }
+
+
+        const tenant =
+            tenants[tenantIndex];
+
+
+        const amount =
+            prompt(
+                "Enter payment amount in UGX:"
+            );
+
+
+        if (!amount || isNaN(amount)) {
+
+            alert("Please enter a valid payment amount.");
+
+            return;
+        }
+
+
+        const paymentDate =
+            prompt(
+                "Enter payment date (YYYY-MM-DD):"
+            );
+
+
+        if (!paymentDate) return;
+
+
+        const payment = {
+
+            id: Date.now(),
+
+            tenantId: tenant.id,
+
+            tenantName: tenant.name,
+
+            amount: Number(amount),
+
+            date: paymentDate,
+
+            propertyName: tenant.propertyName,
+
+            room: tenant.room
+        };
+
+
+        const payments =
+            JSON.parse(localStorage.getItem("payments") || "[]");
+
+
+        payments.push(payment);
+
+
+        localStorage.setItem(
+            "payments",
+            JSON.stringify(payments)
+        );
+
+
+        alert(
+            "Payment recorded successfully!\n\n" +
+            "Tenant: " + payment.tenantName + "\n" +
+            "Amount: UGX " +
+            payment.amount.toLocaleString()
+        );
+
+
+        loadDashboard();
+    }
+
+
+    /* =========================
+       START APPLICATION
+    ========================= */
+
+    loadDashboard();
+
+</script>
+
+</body>
+</html>
