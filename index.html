@@ -678,7 +678,7 @@ unitList.forEach(function(unit) {
                 "<p><strong>Units:</strong> " +
                 property.units +
                 "</p>" +"<p><strong>Unit List:</strong> " +
-unitList.map(unit => "<button type=\"button\" onclick=\"alert('Unit " + unit.number + ": " + unit.status + "')\">Unit " + unit.number + " (" + unit.status + ")</button>").join(" ") +
+unitList.map(unit => "<button type=\"button\" onclick=\"alert('Unit " + unit.number + ": " + unit.status + (unit.tenantId ? " - Tenant: " + (propertyTenants.find(t => t.id === unit.tenantId)?.name || "Unknown") : "") + "')\">Unit " + unit.number + " (" + unit.status + ")</button>").join(" ") +
 "</p>" +
 
                 "<p><strong>Monthly Rent:</strong> UGX " +
