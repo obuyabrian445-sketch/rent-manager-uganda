@@ -150,9 +150,58 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   </footer>
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     <script>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        function addProperty() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              alert("Property management module coming next.");
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      function addProperty() {
+    const propertyName = prompt("Enter property name:");
+    if (!propertyName) return;
+
+    const location = prompt("Enter property location:");
+    if (!location) return;
+
+    const propertyType = prompt("Enter property type (Apartment, House, Hostel, Commercial, Other):");
+    if (!propertyType) return;
+
+    const units = prompt("Enter number of rental units:");
+    if (!units || isNaN(units)) {
+        alert("Please enter a valid number of units.");
+        return;
+    }
+
+    const monthlyRent = prompt("Enter monthly rent per unit in UGX:");
+    if (!monthlyRent || isNaN(monthlyRent)) {
+        alert("Please enter a valid rent amount.");
+        return;
+    }
+
+    const ownerName = prompt("Enter landlord/property owner name:");
+    if (!ownerName) return;
+
+    const ownerPhone = prompt("Enter landlord phone number:");
+    if (!ownerPhone) return;
+
+    const property = {
+        id: Date.now(),
+        name: propertyName,
+        location: location,
+        type: propertyType,
+        units: Number(units),
+        monthlyRent: Number(monthlyRent),
+        owner: ownerName,
+        phone: ownerPhone,
+        dateAdded: new Date().toISOString()
+    };
+
+    const properties = JSON.parse(localStorage.getItem("properties") || "[]");
+    properties.push(property);
+    localStorage.setItem("properties", JSON.stringify(properties));
+
+    alert(
+        "Property added successfully!\n\n" +
+        "Property: " + property.name + "\n" +
+        "Location: " + property.location + "\n" +
+        "Units: " + property.units + "\n" +
+        "Monthly Rent: UGX " + property.monthlyRent.toLocaleString()
+    );
+}
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       function addTenant() {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             alert("Tenant management module coming next.");
