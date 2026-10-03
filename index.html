@@ -378,8 +378,14 @@
 
             phone: ownerPhone,
 
-            dateAdded: new Date().toISOString()
-        };
+            dateAdded: new Date().toISOString(),
+            unitList: Array.from({ length: Number(units) }, (_, i) => ({
+    number: String(i + 1).padStart(2, "0"),
+    status: "Vacant",
+    tenantId: null
+}))
+
+    };
 
 
         const properties =
