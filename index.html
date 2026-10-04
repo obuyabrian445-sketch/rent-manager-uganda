@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rent Manager Uganda</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #1f2937;
+            line-height: 1.45;
+        }
+
+        header {
+            background: #0b5ed7;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 { margin-bottom: 8px; }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .welcome, .section, .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .welcome {
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 15px;
+        }
+
+        .card { padding: 20px; }
+        .card h3 { margin-bottom: 10px; }
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0b5ed7;
+        }
+
+        .actions {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        button {
+            background: #0b5ed7;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 3px;
+        }
+
+        button:hover { background: #084298; }
+        button.secondary { background: #198754; }
+        button.secondary:hover { background: #146c43; }
+        button.warning { background: #fd7e14; }
+        button.warning:hover { background: #dc6502; }
+        button.danger { background: #dc3545; }
+        button.danger:hover { background: #bb2d3b; }
+        button.gray { background: #6c757d; }
+        button.gray:hover { background: #565e64; }
+
+        .section {
+            margin-top: 25px;
+            padding: 20px;
+        }
+
+        .section h2 { margin-bottom: 15px; }
+
+        .property-card, .tenant-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .property-card h3, .tenant-card h3 {
+            color: #0b5ed7;
+            margin-bottom: 8px;
+        }
+
+        .property-card p, .tenant-card p { margin: 5px 0; }
+
+        .unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .unit {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fafafa;
+        }
+
+        .unit.occupied {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .unit.vacant {
+            border-color: #198754;
+            background: #f3fff7;
+        }
+
+        .unit strong { display: block; margin-bottom: 4px; }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .badge.active { background: #d1e7dd; color: #0f5132; }
+        .badge.vacant { background: #d1e7dd; color: #0f5132; }
+        .badge.occupied { background: #f8d7da; color: #842029; }
+        .badge.inactive { background: #e2e3e5; color: #41464b; }
+
+        .empty { color: #777; padding: 10px 0; }
+
+        .notice {
+            margin-top: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: #e7f1ff;
+            color: #084298;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 30px;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 12px; }
+            button { width: 100%; margin: 3px 0; }
+            .unit-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Rent Manager Uganda</h1>
+    <p>Property &amp; Rent Management System</p>
+</header>
+
+<main class="container">
+
+    <section class="welcome">
+        <h2>Welcome to Rent Manager Uganda</h2>
+        <p>
+            Manage properties, tenants, rent payments and rental records
+            from one place.
+        </p>
+        <div class="notice">
+            Tenant/unit protection is enabled: one active tenant can occupy
+            only one unit, and one unit can have only one active tenant.
+        </div>
+    </section>
+
+    <section class="dashboard">
+        <div class="card">
+            <h3>Properties</h3>
+            <p id="propertyCount">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Active Tenants</h3>
+            <p id="tenantCount">0</p>
+        </div>
+
+        <div class="card">
+            <h3>Rent Collected</h3>
+            <p id="rentCollected">UGX 0</p>
+        </div>
+
+        <div class="card">
+            <h3>Outstanding Rent</h3>
+            <p id="outstandingRent">UGX 0</p>
+        </div>
+    </section>
+
+    <section class="actions">
+        <button onclick="addProperty()">Add Property</button>
+        <button onclick="addTenant()" class="secondary">Assign Tenant</button>
+        <button onclick="recordPayment()">Record Payment</button>
+        <button onclick="cleanupData()" class="gray">Synchronize / Clean Data</button>
+    </section>
+
+    <section class="section">
+        <h2>Properties &amp; Units</h2>
+        <div id="propertyList">
+            <p class="empty">No properties added yet.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Tenants</h2>
+        <div id="tenantList">
+            <p class="empty">No tenants added yet.</p>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 Rent Manager Uganda</p>
+</footer>
+
+<script>
+"use strict";
+
+/* =========================================================
+   STORAGE HELPERS
+   ========================================================= */
+
+function readArray(key) {
+    try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value : [];
+    } catch (error) {
+        console.error("Could not read " + key, error);
+        return [];
+    }
+}
+
+function saveArray(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function makeId(prefix) {
+    return prefix + "_" + Date.now() + "_" +
+        Math.random().toString(36).slice(2, 8);
+}
+
+function normalizeUnit(value) {
+    return String(value == null ? "" : value).trim().padStart(2, "0");
+}
+
+function sameId(a, b) {
+    return String(a) === String(b);
+}
+
+function money(value) {
+    return "UGX " + (Number(value) || 0).toLocaleString();
+}
+
+function escapeHtml(value) {
+    return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+/* =========================================================
+   DATA NORMALIZATION / CLEANUP
+   This is the single synchronization authority.
+   ========================================================= */
+
+function ensurePropertyUnits(property) {
+    const count = Math.max(0, Number(property.units) || 0);
+
+    if (!Array.isArray(property.unitList)) {
+        property.unitList = [];
+    }
+
+    const existing = new Map();
+
+    property.unitList.forEach(function(unit) {
+        const number = normalizeUnit(unit.number);
+        if (number) {
+            existing.set(number, {
+                number: number,
+                status: unit.status === "Occupied" ? "Occupied" : "Vacant",
+                tenantId: unit.tenantId || null
+            });
+        }
+    });
+
+    for (let i = 1; i <= count; i++) {
+        const number = normalizeUnit(i);
+        if (!existing.has(number)) {
+            existing.set(number, {
+                number: number,
+                status: "Vacant",
+                tenantId: null
+            });
+        }
+    }
+
+    property.unitList = Array.from(existing.values())
+        .sort(function(a, b) {
+            return Number(a.number) - Number(b.number);
+        });
+}
+
+function synchronizeData() {
+    const properties = readArray("properties");
+    let tenants = readArray("tenants");
+
+    /* Normalize property units first. */
+    properties.forEach(ensurePropertyUnits);
+
+    /* Normalize tenant fields and statuses. */
+    tenants = tenants.map(function(tenant) {
+        tenant.id = tenant.id || makeId("tenant");
+        tenant.name = String(tenant.name || "").trim();
+        tenant.phone = String(tenant.phone || "").trim();
+        tenant.room = normalizeUnit(tenant.room);
+        tenant.propertyId = tenant.propertyId;
+        tenant.status = tenant.status || "Active";
+        tenant.monthlyRent = Number(tenant.monthlyRent) || 0;
+        tenant.dueDate = Number(tenant.dueDate) || 1;
+        tenant.deposit = Number(tenant.deposit) || 0;
+        return tenant;
+    });
+
+    /*
+     * Remove duplicate ACTIVE tenant records that point to the same
+     * property/unit. The first valid active record is retained.
+     */
+    const occupiedKeys = new Set();
+
+    tenants.forEach(function(tenant) {
+        if (tenant.status !== "Active") return;
+
+        const key = String(tenant.propertyId) + "::" + normalizeUnit(tenant.room);
+
+        if (occupiedKeys.has(key)) {
+            tenant.status = "Inactive";
+            tenant.vacatedDate = tenant.vacatedDate || new Date().toISOString();
+        } else {
+            occupiedKeys.add(key);
+        }
+    });
+
+    /*
+     * A tenant may not be active in a property that no longer exists.
+     * Mark it inactive instead of leaving a stale relationship.
+     */
+    tenants.forEach(function(tenant) {
+        if (tenant.status !== "Active") return;
+
+        const property = properties.find(function(p) {
+            return sameId(p.id, tenant.propertyId);
+        });
+
+        if (!property) {
+            tenant.status = "Inactive";
+            tenant.vacatedDate = tenant.vacatedDate || new Date().toISOString();
+        }
+    });
+
+    /*
+     * Rebuild every unit's occupancy from ACTIVE tenants.
+     * This makes tenants the source of truth for occupancy and removes
+     * stale tenantId/status values from properties.
+     */
+    properties.forEach(function(property) {
+        ensurePropertyUnits(property);
+
+        property.unitList.forEach(function(unit) {
+            unit.status = "Vacant";
+            unit.tenantId = null;
+
+            const tenant = tenants.find(function(t) {
+                return t.status === "Active" &&
+                    sameId(t.propertyId, property.id) &&
+                    normalizeUnit(t.room) === normalizeUnit(unit.number);
+            });
+
+            if (tenant) {
+                unit.status = "Occupied";
+                unit.tenantId = tenant.id;
+                tenant.propertyName = property.name;
+            }
+        });
+    });
+
+    /*
+     * Keep the stored property name synchronized with the actual
+     * property record.
+     */
+    tenants.forEach(function(tenant) {
+        const property = properties.find(function(p) {
+            return sameId(p.id, tenant.propertyId);
+        });
+
+        if (property) {
+            tenant.propertyName = property.name;
+        }
+    });
+
+    saveArray("properties", properties);
+    saveArray("tenants", tenants);
+
+    return {
+        properties: properties,
+        tenants: tenants,
+        payments: readArray("payments")
+    };
+}
+
+function cleanupData() {
+    synchronizeData();
+    loadDashboard();
+    alert(
+        "Synchronization completed.\n\n" +
+        "Duplicate active unit assignments were removed, " +
+        "stale relationships were cleaned, and unit/tenant status was synchronized."
+    );
+}
+
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
+
+function loadDashboard() {
+    const data = synchronizeData();
+    const properties = data.properties;
+    const tenants = data.tenants;
+    const payments = data.payments;
+
+    document.getElementById("propertyCount").textContent =
+        properties.length;
+
+    document.getElementById("tenantCount").textContent =
+        tenants.filter(function(t) { return t.status === "Active"; }).length;
+
+    let totalCollected = 0;
+
+    payments.forEach(function(payment) {
+        totalCollected += Number(payment.amount) || 0;
+    });
+
+    document.getElementById("rentCollected").textContent =
+        money(totalCollected);
+
+    let outstanding = 0;
+
+    tenants.forEach(function(tenant) {
+        if (tenant.status !== "Active") return;
+
+        const rent = Number(tenant.monthlyRent) || 0;
+
+        const paid = payments
+            .filter(function(payment) {
+                return sameId(payment.tenantId, tenant.id);
+            })
+            .reduce(function(sum, payment) {
+                return sum + (Number(payment.amount) || 0);
+            }, 0);
+
+        if (rent > paid) {
+            outstanding += rent - paid;
+        }
+    });
+
+    document.getElementById("outstandingRent").textContent =
+        money(outstanding);
+
+    displayProperties(properties, tenants);
+    displayTenants(tenants);
+}
+
+/* =========================================================
+   ADD PROPERTY
+   ========================================================= */
+
+function addProperty() {
+    const propertyName = prompt("Enter property name:");
+    if (!propertyName) return;
+
+    const location = prompt("Enter property location:");
+    if (!location) return;
+
+    const propertyType = prompt(
+        "Enter property type (Apartment, House, Hostel, Commercial, Other):"
+    );
+    if (!propertyType) return;
+
+    const units = prompt("Enter number of rental units:");
+    if (!units || !Number.isInteger(Number(units)) || Number(units) <= 0) {
+        alert("Please enter a valid positive number of units.");
+        return;
+    }
+
+    const monthlyRent = prompt("Enter monthly rent per unit in UGX:");
+    if (monthlyRent === null || monthlyRent === "" ||
+        isNaN(monthlyRent) || Number(monthlyRent) < 0) {
+        alert("Please enter a valid rent amount.");
+        return;
+    }
+
+    const ownerName = prompt("Enter landlord/property owner name:");
+    if (!ownerName) return;
+
+    const ownerPhone = prompt("Enter landlord phone number:");
+    if (ownerPhone === null) return;
+
+    const properties = readArray("properties");
+
+    const duplicateProperty = properties.find(function(p) {
+        return String(p.name).trim().toLowerCase() ===
+            String(propertyName).trim().toLowerCase() &&
+            String(p.location).trim().toLowerCase() ===
+            String(location).trim().toLowerCase();
+    });
+
+    if (duplicateProperty) {
+        alert("A property with the same name and location already exists.");
+        return;
+    }
+
+    const property = {
+        id: makeId("property"),
+        name: String(propertyName).trim(),
+        location: String(location).trim(),
+        type: String(propertyType).trim(),
+        units: Number(units),
+        monthlyRent: Number(monthlyRent),
+        owner: String(ownerName).trim(),
+        phone: String(ownerPhone).trim(),
+        dateAdded: new Date().toISOString(),
+        unitList: Array.from({ length: Number(units) }, function(_, i) {
+            return {
+                number: normalizeUnit(i + 1),
+                status: "Vacant",
+                tenantId: null
+            };
+        })
+    };
+
+    properties.push(property);
+    saveArray("properties", properties);
+
+    alert("Property added successfully.");
+    loadDashboard();
+}
+
+/* =========================================================
+   ASSIGN TENANT
+   This is the ONLY tenant-assignment function.
+   ========================================================= */
+
+function addTenant() {
+    const data = synchronizeData();
+    const properties = data.properties;
+
+    if (properties.length === 0) {
+        alert("Please add a property first.");
+        return;
+    }
+
+    const tenantName = prompt("Enter tenant full name:");
+    if (!tenantName) return;
+
+    const phone = prompt("Enter tenant phone number:");
+    if (phone === null) return;
+
+    let propertyMessage = "Select property by entering its number:\n\n";
+
+    properties.forEach(function(property, index) {
+        propertyMessage +=
+            (index + 1) + ". " + property.name +
+            " - " + property.location + "\n";
+    });
+
+    const propertyChoice = prompt(propertyMessage);
+    const propertyIndex = Number(propertyChoice) - 1;
+
+    if (!Number.isInteger(propertyIndex) ||
+        propertyIndex < 0 ||
+        propertyIndex >= properties.length) {
+        alert("Invalid property selection.");
+        return;
+    }
+
+    const property = properties[propertyIndex];
+    ensurePropertyUnits(property);
+
+    const vacantUnits = property.unitList.filter(function(unit) {
+        return unit.status === "Vacant";
+    });
+
+    if (vacantUnits.length === 0) {
+        alert("There are no vacant units in this property.");
+        return;
+    }
+
+    let unitMessage = "Select a VACANT unit:\n\n";
+    vacantUnits.forEach(function(unit, index) {
+        unitMessage += (index + 1) + ". Unit " + unit.number + "\n";
+    });
+
+    const unitChoice = prompt(unitMessage);
+    const unitIndex = Number(unitChoice) - 1;
+
+    if (!Number.isInteger(unitIndex) ||
+        unitIndex < 0 ||
+        unitIndex >= vacantUnits.length) {
+        alert("Invalid unit selection.");
+        return;
+    }
+
+    const unit = normalizeUnit(vacantUnits[unitIndex].number);
+
+    const tenants = readArray("tenants");
+
+    /* Duplicate tenant/unit protection. */
+    const duplicateTenantName = tenants.find(function(t) {
+        return t.status === "Active" &&
+            String(t.name).trim().toLowerCase() ===
+            String(tenantName).trim().toLowerCase();
+    });
+
+    if (duplicateTenantName) {
+        alert(
+            "This tenant already has an active tenancy.\n\n" +
+            "Use Transfer Tenant if the tenant is moving to another unit."
+        );
+        return;
+    }
+
+    const occupied = tenants.find(function(t) {
+        return t.status === "Active" &&
+            sameId(t.propertyId, property.id) &&
+            normalizeUnit(t.room) === unit;
+    });
+
+    if (occupied) {
+        alert("Unit " + unit + " is already occupied.");
+        loadDashboard();
+        return;
+    }
+
+    const monthlyRent = prompt(
+        "Enter monthly rent in UGX:",
+        property.monthlyRent || 0
+    );
+
+    if (monthlyRent === null || monthlyRent === "" ||
+        isNaN(monthlyRent) || Number(monthlyRent) < 0) {
+        alert("Please enter a valid monthly rent.");
+        return;
+    }
+
+    const moveInDate = prompt("Enter move-in date (YYYY-MM-DD):");
+    if (!moveInDate) return;
+
+    const dueDate = prompt("Enter rent due day (1-31):", "1");
+
+    if (dueDate === null ||
+        !Number.isInteger(Number(dueDate)) ||
+        Number(dueDate) < 1 ||
+        Number(dueDate) > 31) {
+        alert("Please enter a valid due day from 1 to 31.");
+        return;
+    }
+
+    const deposit = prompt("Enter security deposit in UGX:", "0");
+
+    if (deposit === null || deposit === "" ||
+        isNaN(deposit) || Number(deposit) < 0) {
+        alert("Please enter a valid security deposit.");
+        return;
+    }
+
+    const tenant = {
+        id: makeId("tenant"),
+        name: String(tenantName).trim(),
+        phone: String(phone).trim(),
+        propertyId: property.id,
+        propertyName: property.name,
+        room: unit,
+        monthlyRent: Number(monthlyRent),
+        moveInDate: moveInDate,
+        dueDate: Number(dueDate),
+        deposit: Number(deposit),
+        status: "Active",
+        dateAdded: new Date().toISOString()
+    };
+
+    tenants.push(tenant);
+    saveArray("tenants", tenants);
+
+    loadDashboard();
+
+    alert(
+        "Tenant assigned successfully.\n\n" +
+        "Tenant: " + tenant.name +
+        "\nProperty: " + property.name +
+        "\nUnit: " + unit
+    );
+}
+
+/* =========================================================
+   VIEW TENANT
+   ========================================================= */
+
+function viewTenant(tenantId) {
+    const data = synchronizeData();
+    const tenant = data.tenants.find(function(t) {
+        return sameId(t.id, tenantId);
+    });
+
+    if (!tenant) {
+        alert("Tenant not found.");
+        return;
+    }
+
+    const paid = data.payments
+        .filter(function(payment) {
+            return sameId(payment.tenantId, tenant.id);
+        })
+        .reduce(function(sum, payment) {
+            return sum + (Number(payment.amount) || 0);
+        }, 0);
+
+    alert(
+        "TENANT DETAILS\n\n" +
+        "Name: " + tenant.name +
+        "\nPhone: " + tenant.phone +
+        "\nProperty: " + tenant.propertyName +
+        "\nUnit: " + tenant.room +
+        "\nMonthly Rent: " + money(tenant.monthlyRent) +
+        "\nMove-in Date: " + tenant.moveInDate +
+        "\nRent Due Day: " + tenant.dueDate +
+        "\nSecurity Deposit: " + money(tenant.deposit) +
+        "\nTotal Payments: " + money(paid) +
+        "\nStatus: " + tenant.status
+    );
+}
+
+/* =========================================================
+   EDIT TENANT
+   ========================================================= */
+
+function editTenant(tenantId) {
+    const data = synchronizeData();
+    const tenants = data.tenants;
+
+    const tenant = tenants.find(function(t) {
+        return sameId(t.id, tenantId);
+    });
+
+    if (!tenant) {
+        alert("Tenant not found.");
+        return;
+    }
+
+    const name = prompt("Tenant full name:", tenant.name);
+    if (name === null || !name.trim()) return;
+
+    const phone = prompt("Tenant phone number:", tenant.phone);
+    if (phone === null) return;
+
+    const rent = prompt("Monthly rent in UGX:", tenant.monthlyRent);
+    if (rent === null || rent === "" || isNaN(rent) || Number(rent) < 0) {
+        alert("Invalid rent amount.");
+        return;
+    }
+
+    const moveInDate = prompt("Move-in date (YYYY-MM-DD):", tenant.moveInDate);
+    if (moveInDate === null || !moveInDate.trim()) return;
+
+    const dueDate = prompt("Rent due day (1-31):", tenant.dueDate);
+    if (dueDate === null ||
+        !Number.isInteger(Number(dueDate)) ||
+        Number(dueDate) < 1 ||
+        Number(dueDate) > 31) {
+        alert("Invalid due day.");
+        return;
+    }
+
+    const deposit = prompt("Security deposit in UGX:", tenant.deposit);
+    if (deposit === null || deposit === "" ||
+        isNaN(deposit) || Number(deposit) < 0) {
+        alert("Invalid deposit amount.");
+        return;
+    }
+
+    tenant.name = name.trim();
+    tenant.phone = phone.trim();
+    tenant.monthlyRent = Number(rent);
+    tenant.moveInDate = moveInDate.trim();
+    tenant.dueDate = Number(dueDate);
+    tenant.deposit = Number(deposit);
+
+    saveArray("tenants", tenants);
+    loadDashboard();
+
+    alert("Tenant details updated successfully.");
+}
+
+/* =========================================================
+   DELETE TENANT
+   Deletes the tenant and their payment history.
+   ========================================================= */
+
+function deleteTenant(tenantId) {
+    const data = synchronizeData();
+    const tenants = data.tenants;
+
+    const tenant = tenants.find(function(t) {
+        return sameId(t.id, tenantId);
+    });
+
+    if (!tenant) {
+        alert("Tenant not found.");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Delete tenant \"" + tenant.name + "\"?\n\n" +
+        "This will also delete payment records linked to this tenant."
+    );
+
+    if (!confirmed) return;
+
+    const remainingTenants = tenants.filter(function(t) {
+        return !sameId(t.id, tenantId);
+    });
+
+    const remainingPayments = data.payments.filter(function(payment) {
+        return !sameId(payment.tenantId, tenantId);
+    });
+
+    saveArray("tenants", remainingTenants);
+    saveArray("payments", remainingPayments);
+
+    loadDashboard();
+
+    alert("Tenant deleted and their unit was released.");
+}
+
+/* =========================================================
+   VACATE UNIT
+   Keeps tenant history but marks tenancy inactive.
+   ========================================================= */
+
+function vacateTenant(tenantId) {
+    const data = synchronizeData();
+    const tenants = data.tenants;
+
+    const tenant = tenants.find(function(t) {
+        return sameId(t.id, tenantId);
+    });
+
+    if (!tenant) {
+        alert("Tenant not found.");
+        return;
+    }
+
+    if (tenant.status !== "Active") {
+        alert("This tenant is already inactive.");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Vacate Unit " + tenant.room +
+        " for tenant \"" + tenant.name + "\"?"
+    );
+
+    if (!confirmed) return;
+
+    tenant.status = "Inactive";
+    tenant.vacatedDate = new Date().toISOString();
+
+    saveArray("tenants", tenants);
+    loadDashboard();
+
+    alert("Unit " + tenant.room + " has been vacated.");
+}
+
+/* =========================================================
+   TRANSFER TENANT
+   Releases old unit and assigns the same tenant to a new unit.
+   ========================================================= */
+
+function transferTenant(tenantId) {
+    const data = synchronizeData();
+    const properties = data.properties;
+    const tenants = data.tenants;
+
+    const tenant = tenants.find(function(t) {
+        return sameId(t.id, tenantId);
+    });
+
+    if (!tenant || tenant.status !== "Active") {
+        alert("Active tenant not found.");
+        return;
+    }
+
+    const property = properties.find(function(p) {
+        return sameId(p.id, tenant.propertyId);
+    });
+
+    if (!property) {
+        alert("Tenant's current property was not found.");
+        return;
+    }
+
+    let propertyMessage = "Select destination property:\n\n";
+
+    properties.forEach(function(p, index) {
+        propertyMessage +=
+            (index + 1) + ". " + p.name +
+            " - " + p.location + "\n";
+    });
+
+    const propertyChoice = prompt(propertyMessage);
+    const propertyIndex = Number(propertyChoice) - 1;
+
+    if (!Number.isInteger(propertyIndex) ||
+        propertyIndex < 0 ||
+        propertyIndex >= properties.length) {
+        alert("Invalid property selection.");
+        return;
+    }
+
+    const destination = properties[propertyIndex];
+    ensurePropertyUnits(destination);
+
+    const vacantUnits = destination.unitList.filter(function(unit) {
+        return unit.status === "Vacant";
+    });
+
+    if (vacantUnits.length === 0) {
+        alert("The selected property has no vacant units.");
+        return;
+    }
+
+    let unitMessage = "Select destination vacant unit:\n\n";
+
+    vacantUnits.forEach(function(unit, index) {
+        unitMessage += (index + 1) + ". Unit " + unit.number + "\n";
+    });
+
+    const unitChoice = prompt(unitMessage);
+    const unitIndex = Number(unitChoice) - 1;
+
+    if (!Number.isInteger(unitIndex) ||
+        unitIndex < 0 ||
+        unitIndex >= vacantUnits.length) {
+        alert("Invalid unit selection.");
+        return;
+    }
+
+    const newUnit = normalizeUnit(vacantUnits[unitIndex].number);
+
+    const conflict = tenants.find(function(t) {
+        return t.status === "Active" &&
+            sameId(t.propertyId, destination.id) &&
+            normalizeUnit(t.room) === newUnit &&
+            !sameId(t.id, tenant.id);
+    });
+
+    if (conflict) {
+        alert("That unit is already occupied.");
+        return;
+    }
+
+    const confirmed = confirm(
+        "Transfer " + tenant.name +
+        " from " + tenant.propertyName +
+        " Unit " + tenant.room +
+        " to " + destination.name +
+        " Unit " + newUnit + "?"
+    );
+
+    if (!confirmed) return;
+
+    tenant.propertyId = destination.id;
+    tenant.propertyName = destination.name;
+    tenant.room = newUnit;
+    tenant.transferredDate = new Date().toISOString();
+
+    saveArray("tenants", tenants);
+    loadDashboard();
+
+    alert(
+        "Tenant transferred successfully.\n\n" +
+        tenant.name + " is now in " +
+        destination.name + " - Unit " + newUnit + "."
+    );
+}
+
+/* =========================================================
+   RECORD PAYMENT
+   ========================================================= */
+
+function recordPayment() {
+    const data = synchronizeData();
+
+    const activeTenants = data.tenants.filter(function(tenant) {
+        return tenant.status === "Active";
+    });
+
+    if (activeTenants.length === 0) {
+        alert("Please assign an active tenant first.");
+        return;
+    }
+
+    let tenantMessage =
+        "Select tenant by entering their number:\n\n";
+
+    activeTenants.forEach(function(tenant, index) {
+        tenantMessage +=
+            (index + 1) + ". " +
+            tenant.name +
+            " - " + tenant.propertyName +
+            " Unit " + tenant.room + "\n";
+    });
+
+    const tenantChoice = prompt(tenantMessage);
+    const tenantIndex = Number(tenantChoice) - 1;
+
+    if (!Number.isInteger(tenantIndex) ||
+        tenantIndex < 0 ||
+        tenantIndex >= activeTenants.length) {
+        alert("Invalid tenant selection.");
+        return;
+    }
+
+    const tenant = activeTenants[tenantIndex];
+
+    const amount = prompt("Enter payment amount in UGX:");
+
+    if (amount === null || amount === "" ||
+        isNaN(amount) || Number(amount) <= 0) {
+        alert("Please enter a valid payment amount.");
+        return;
+    }
+
+    const paymentDate = prompt(
+        "Enter payment date (YYYY-MM-DD):",
+        new Date().toISOString().slice(0, 10)
+    );
+
+    if (!paymentDate) return;
+
+    const payments = data.payments;
+
+    const payment = {
+        id: makeId("payment"),
+        tenantId: tenant.id,
+        tenantName: tenant.name,
+        amount: Number(amount),
+        date: paymentDate,
+        propertyId: tenant.propertyId,
+        propertyName: tenant.propertyName,
+        room: tenant.room
+    };
+
+    payments.push(payment);
+    saveArray("payments", payments);
+
+    loadDashboard();
+
+    alert(
+        "Payment recorded successfully!\n\n" +
+        "Tenant: " + payment.tenantName +
+        "\nAmount: " + money(payment.amount)
+    );
+}
+
+/* =========================================================
+   DISPLAY PROPERTIES / UNITS
+   ========================================================= */
+
+function displayProperties(properties, tenants) {
+    const container = document.getElementById("propertyList");
+
+    if (properties.length === 0) {
+        container.innerHTML =
+            '<p class="empty">No properties added yet.</p>';
+        return;
+    }
+
+    container.innerHTML = "";
+
+    properties.forEach(function(property) {
+        ensurePropertyUnits(property);
+
+        const div = document.createElement("div");
+        div.className = "property-card";
+
+        let html =
+            "<h3>" + escapeHtml(property.name) + "</h3>" +
+            "<p><strong>Location:</strong> " +
+            escapeHtml(property.location) + "</p>" +
+            "<p><strong>Type:</strong> " +
+            escapeHtml(property.type) + "</p>" +
+            "<p><strong>Units:</strong> " +
+            property.units + "</p>" +
+            "<p><strong>Monthly Rent:</strong> " +
+            money(property.monthlyRent) + "</p>" +
+            "<p><strong>Owner:</strong> " +
+            escapeHtml(property.owner) + "</p>" +
+            "<p><strong>Phone:</strong> " +
+            escapeHtml(property.phone) + "</p>" +
+            "<div class='unit-grid'>";
+
+        property.unitList.forEach(function(unit) {
+            const tenant = tenants.find(function(t) {
+                return t.status === "Active" &&
+                    sameId(t.id, unit.tenantId);
+            });
+
+            if (tenant) {
+                html +=
+                    "<div class='unit occupied'>" +
+                    "<strong>Unit " + escapeHtml(unit.number) + "</strong>" +
+                    "<span class='badge occupied'>Occupied</span>" +
+                    "<p>" + escapeHtml(tenant.name) + "</p>" +
+                    "<button type='button' onclick=\"viewTenant('" +
+                    String(tenant.id).replace(/'/g, "\\'") +
+                    "')\">View</button>" +
+                    "</div>";
+            } else {
+                html +=
+                    "<div class='unit vacant'>" +
+                    "<strong>Unit " + escapeHtml(unit.number) + "</strong>" +
+                    "<span class='badge vacant'>Vacant</span>" +
+                    "<button type='button' class='secondary' " +
+                    "onclick=\"assignToSpecificUnit('" +
+                    String(property.id).replace(/'/g, "\\'") +
+                    "','" +
+                    String(unit.number).replace(/'/g, "\\'") +
+                    "')\">Assign Tenant</button>" +
+                    "</div>";
+            }
+        });
+
+        html += "</div>";
+
+        div.innerHTML = html;
+        container.appendChild(div);
+    });
+}
+
+/* =========================================================
+   ASSIGN TO A SPECIFIC VACANT UNIT
+   ========================================================= */
+
+function assignToSpecificUnit(propertyId, unitNumber) {
+    const data = synchronizeData();
+
+    const property = data.properties.find(function(p) {
+        return sameId(p.id, propertyId);
+    });
+
+    if (!property) {
+        alert("Property not found.");
+        return;
+    }
+
+    const unit = normalizeUnit(unitNumber);
+
+    const unitRecord = property.unitList.find(function(u) {
+        return normalizeUnit(u.number) === unit;
+    });
+
+    if (!unitRecord || unitRecord.status === "Occupied") {
+        alert("That unit is already occupied or does not exist.");
+        loadDashboard();
+        return;
+    }
+
+    const tenantName = prompt("Enter tenant full name:");
+    if (!tenantName) return;
+
+    const tenants = data.tenants;
+
+    const existingActiveTenant = tenants.find(function(t) {
+        return t.status === "Active" &&
+            String(t.name).trim().toLowerCase() ===
+            String(tenantName).trim().toLowerCase();
+    });
+
+    if (existingActiveTenant) {
+        alert(
+            "This tenant already has an active tenancy. " +
+            "Use Transfer Tenant instead."
+        );
+        return;
+    }
+
+    const phone = prompt("Enter tenant phone number:");
+    if (phone === null) return;
+
+    const rent = prompt(
+        "Enter monthly rent in UGX:",
+        property.monthlyRent || 0
+    );
+    if (rent === null || rent === "" || isNaN(rent) || Number(rent) < 0) {
+        alert("Invalid rent amount.");
+        return;
+    }
+
+    const moveInDate = prompt("Enter move-in date (YYYY-MM-DD):");
+    if (!moveInDate) return;
+
+    const dueDate = prompt("Enter rent due day (1-31):", "1");
+    if (dueDate === null ||
+        !Number.isInteger(Number(dueDate)) ||
+        Number(dueDate) < 1 ||
+        Number(dueDate) > 31) {
+        alert("Invalid due day.");
+        return;
+    }
+
+    const deposit = prompt("Enter security deposit in UGX:", "0");
+    if (deposit === null || deposit === "" ||
+        isNaN(deposit) || Number(deposit) < 0) {
+        alert("Invalid deposit.");
+        return;
+    }
+
+    const tenant = {
+        id: makeId("tenant"),
+        name: tenantName.trim(),
+        phone: phone.trim(),
+        propertyId: property.id,
+        propertyName: property.name,
+        room: unit,
+        monthlyRent: Number(rent),
+        moveInDate: moveInDate,
+        dueDate: Number(dueDate),
+        deposit: Number(deposit),
+        status: "Active",
+        dateAdded: new Date().toISOString()
+    };
+
+    tenants.push(tenant);
+    saveArray("tenants", tenants);
+
+    loadDashboard();
+
+    alert(
+        "Tenant " + tenant.name +
+        " assigned to Unit " + unit + "."
+    );
+}
+
+/* =========================================================
+   DISPLAY TENANTS
+   ========================================================= */
+
+function displayTenants(tenants) {
+    const container = document.getElementById("tenantList");
+
+    if (tenants.length === 0) {
+        container.innerHTML =
+            '<p class="empty">No tenants added yet.</p>';
+        return;
+    }
+
+    container.innerHTML = "";
+
+    tenants.forEach(function(tenant) {
+        const div = document.createElement("div");
+        div.className = "tenant-card";
+
+        const statusClass =
+            tenant.status === "Active" ? "active" : "inactive";
+
+        div.innerHTML =
+            "<h3>" + escapeHtml(tenant.name) + "</h3>" +
+            "<p><strong>Phone:</strong> " +
+            escapeHtml(tenant.phone) + "</p>" +
+            "<p><strong>Property:</strong> " +
+            escapeHtml(tenant.propertyName || "Unknown") + "</p>" +
+            "<p><strong>Unit:</strong> " +
+            escapeHtml(tenant.room || "") + "</p>" +
+            "<p><strong>Monthly Rent:</strong> " +
+            money(tenant.monthlyRent) + "</p>" +
+            "<p><strong>Move-in Date:</strong> " +
+            escapeHtml(tenant.moveInDate || "") + "</p>" +
+            "<p><strong>Rent Due Day:</strong> " +
+            escapeHtml(tenant.dueDate) + "</p>" +
+            "<p><strong>Security Deposit:</strong> " +
+            money(tenant.deposit) + "</p>" +
+            "<p><strong>Status:</strong> " +
+            "<span class='badge " + statusClass + "'>" +
+            escapeHtml(tenant.status) + "</span></p>" +
+
+            "<div>" +
+            "<button type='button' onclick=\"viewTenant('" +
+            String(tenant.id).replace(/'/g, "\\'") +
+            "')\">View Tenant</button>" +
+
+            "<button type='button' class='secondary' " +
+            "onclick=\"editTenant('" +
+            String(tenant.id).replace(/'/g, "\\'") +
+            "')\">Edit</button>" +
+
+            (tenant.status === "Active" ?
+                "<button type='button' class='warning' " +
+                "onclick=\"transferTenant('" +
+                String(tenant.id).replace(/'/g, "\\'") +
+                "')\">Transfer</button>" +
+
+                "<button type='button' class='gray' " +
+                "onclick=\"vacateTenant('" +
+                String(tenant.id).replace(/'/g, "\\'") +
+                "')\">Vacate Unit</button>"
+                : "") +
+
+            "<button type='button' class='danger' " +
+            "onclick=\"deleteTenant('" +
+            String(tenant.id).replace(/'/g, "\\'") +
+            "')\">Delete</button>" +
+            "</div>";
+
+        container.appendChild(div);
+    });
+}
+
+/* =========================================================
+   START APPLICATION
+   ========================================================= */
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
