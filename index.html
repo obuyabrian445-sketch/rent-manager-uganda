@@ -678,7 +678,26 @@ unitList.forEach(function(unit) {
                 "<p><strong>Units:</strong> " +
                 property.units +
                 "</p>" +"<p><strong>Unit List:</strong> " +
-unitList.map(unit => "<button type=\"button\" onclick=\"alert('Unit " + unit.number + ": " + unit.status + (unit.tenantId ? " - Tenant: " + (propertyTenants.find(t => t.id === unit.tenantId)?.name || "Unknown") : "") + "')\">Unit " + unit.number + " (" + unit.status + ")</button>").join(" ") +
+unitList.map(unit => {
+  const tenant = propertyTenants.find(
+    tenant => String(tenant.id) === String(unit.tenantId)
+  );
+
+  if (unit.status === "Occupied") {
+    return "<button type=\"button\" onclick=\"alert('Tenant: " +
+      (tenant ? tenant.name : "Unknown") +
+      "')\">Unit " + unit.number +
+      " - Occupied</button> " +
+      "<button type=\"button\" onclick=\"alert('View Tenant: " +
+      (tenant ? tenant.name : "Unknown") +
+      "')\">View Tenant</button>";
+  }
+
+  return "<button type=\"button\" onclick=\"alert('Assign Tenant to Unit " +
+    unit.number +
+    "')\">Unit " + unit.number +
+    " - Vacant</button>";
+}).join("") +
 "</p>" +
 
                 "<p><strong>Monthly Rent:</strong> UGX " +
