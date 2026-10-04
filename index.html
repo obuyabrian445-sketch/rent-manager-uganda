@@ -914,6 +914,31 @@ unitList.map(unit => {
 
     loadDashboard();
 } 
+   function viewTenant(tenantId) {
+    const tenants =
+        JSON.parse(localStorage.getItem("tenants") || "[]");
+
+    const tenant = tenants.find(
+        tenant => String(tenant.id) === String(tenantId)
+    );
+
+    if (!tenant) {
+        alert("Tenant not found.");
+        return;
+    }
+
+    alert(
+        "Tenant: " + tenant.name +
+        "\nPhone: " + tenant.phone +
+        "\nProperty: " + tenant.propertyName +
+        "\nUnit: " + tenant.room +
+        "\nMonthly Rent: UGX " + Number(tenant.monthlyRent).toLocaleString() +
+        "\nMove-in Date: " + tenant.moveInDate +
+        "\nRent Due Day: " + tenant.dueDate +
+        "\nSecurity Deposit: UGX " + Number(tenant.deposit).toLocaleString() +
+        "\nStatus: " + tenant.status
+    );
+} 
     function recordPayment() {
 
         const tenants =
