@@ -628,7 +628,7 @@
                 document.createElement("div");
 
 
-            div.className = "property-card";const unitList = Array.isArray(property.unitList)
+           div.className = "property-card";const unitList = Array.isArray(property.unitList) && property.unitList.length > 0
   ? property.unitList
   : Array.from({ length: Number(property.units) || 0 }, (_, i) => ({
       number: String(i + 1).padStart(2, "0"),
