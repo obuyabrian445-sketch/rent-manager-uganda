@@ -684,17 +684,18 @@ unitList.map(unit => {
   );
 
   if (unit.status === "Occupied") {
-    return "<button type=\"button\" onclick=\"alert('Tenant: " +
-      (tenant ? tenant.name : "Unknown") +
-      "')\">Unit " + unit.number +
-      " - Occupied</button> " +
-      "<button type=\"button\" onclick=\"alert('View Tenant: " +
-      (tenant ? tenant.name : "Unknown") +
-      "')\">View Tenant</button>";
+    return "<button type=\"button\" onclick=\"viewTenant(" +
+      (tenant ? tenant.id : "null") +
+      ")\">Unit " + unit.number +
+      " - Tenant: " + (tenant ? tenant.name : "Unknown") +
+      "</button>" +
+      "<button type=\"button\" onclick=\"viewTenant(" +
+      (tenant ? tenant.id : "null") +
+      ")\">View Tenant</button>";
   }
 
-  return "<button type=\"button\" onclick=\"alert('Assign Tenant to Unit " +
-    unit.number +
+  return "<button type=\"button\" onclick=\"assignTenantToUnit(" +
+    property.id + ", '" + unit.number +
     "')\">Unit " + unit.number +
     " - Vacant</button>";
 }).join("") +
@@ -803,6 +804,116 @@ unitList.map(unit => {
        RECORD PAYMENT
     ========================= */
 
+   function assignTenantToUnit(propertyId, unitNumber) {
+    const properties =
+        JSON.parse(localStorage.getItem("properties") || "[]");
+
+    const tenants =
+        JSON.parse(localStorage.getItem("tenants") || "[]");
+
+    const property = properties.find(
+        p => String(p.id) === String(propertyId)
+    );
+
+    if (!property) {
+        alert("Property not found.");
+        return;
+    }
+
+    const unit = String(unitNumber).padStart(2, "0");
+
+    const alreadyOccupied = tenants.find(
+        tenant =>
+            String(tenant.propertyId) === String(property.id) &&
+            String(tenant.room).padStart(2, "0") === unit &&
+            tenant.status === "Active"
+    );
+
+    if (alreadyOccupied) {
+        alert("Unit " + unit + " is already occupied.");
+        return;
+    }
+
+    const tenantName = prompt("Enter tenant name:");
+
+    if (!tenantName) {
+        return;
+    }
+
+    const phone = prompt("Enter tenant phone number:");
+
+    const monthlyRent = prompt(
+        "Enter monthly rent:",
+        property.monthlyRent || ""
+    );
+
+    if (!monthlyRent) {
+        return;
+    }
+
+    const moveInDate = prompt(
+        "Enter move-in date (YYYY-MM-DD):"
+    );
+
+    if (!moveInDate) {
+        return;
+    }
+
+    const dueDate = prompt(
+        "Enter rent due day (1-31):",
+        "1"
+    );
+
+    const deposit = prompt(
+        "Enter security deposit:",
+        "0"
+    );
+
+    const tenant = {
+        id: Date.now(),
+        name: tenantName,
+        phone: phone || "",
+        propertyId: property.id,
+        propertyName: property.name,
+        room: unit,
+        monthlyRent: Number(monthlyRent),
+        moveInDate: moveInDate,
+        dueDate: Number(dueDate) || 1,
+        deposit: Number(deposit) || 0,
+        status: "Active",
+        dateAdded: new Date().toISOString()
+    };
+
+    tenants.push(tenant);
+
+    localStorage.setItem(
+        "tenants",
+        JSON.stringify(tenants)
+    );
+
+    if (Array.isArray(property.unitList)) {
+        const selectedUnit = property.unitList.find(
+            u => String(u.number).padStart(2, "0") === unit
+        );
+
+        if (selectedUnit) {
+            selectedUnit.status = "Occupied";
+            selectedUnit.tenantId = tenant.id;
+        }
+    }
+
+    localStorage.setItem(
+        "properties",
+        JSON.stringify(properties)
+    );
+
+    alert(
+        "Tenant " + tenantName +
+        " assigned to Unit " + unit + "."
+    );
+
+    loadDashboard();
+} 
     function recordPayment() {
 
         const tenants =
