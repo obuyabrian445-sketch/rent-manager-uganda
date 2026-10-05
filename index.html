@@ -488,7 +488,9 @@ function loadDashboard() {
 
         const paid = payments
             .filter(function(payment) {
-                return sameId(payment.tenantId, tenant.id);
+              return sameId(payment.tenantId, tenant.id) &&
+    (payment.rentMonth || payment.date.slice(0, 7)) ===
+    new Date().toISOString().slice(0, 7);
             })
             .reduce(function(sum, payment) {
                 return sum + (Number(payment.amount) || 0);
@@ -1105,6 +1107,7 @@ if (reference === null) return;
         tenantName: tenant.name,
         amount: Number(amount),
         date: paymentDate,
+        rentMonth: paymentDate.slice(0, 7),
         propertyId: tenant.propertyId,
         propertyName: tenant.propertyName,
         room: tenant.room,
