@@ -1401,6 +1401,29 @@ if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
 } else if (new Date().getDate() > dueDay) {
     rentStatus = "Overdue";
 }
+        const leaseEndDate = String(tenant.leaseEndDate || "").trim();
+let leaseStatus = "No Lease Date";
+
+if (leaseEndDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const endDate = new Date(leaseEndDate + "T00:00:00");
+
+    if (!isNaN(endDate.getTime())) {
+        const daysRemaining = Math.ceil(
+            (endDate - today) / (1000 * 60 * 60 * 24)
+        );
+
+        if (daysRemaining < 0) {
+            leaseStatus = "Expired";
+        } else if (daysRemaining <= 30) {
+            leaseStatus = "Expiring Soon";
+        } else {
+            leaseStatus = "Active";
+        }
+    }
+}
         const tenantBalance = Math.max(monthlyRent - tenantPaid, 0);
         
 
