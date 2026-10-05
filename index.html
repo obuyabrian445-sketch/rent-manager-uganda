@@ -241,6 +241,39 @@
     </section>
 
 <section class="section">
+    <h2>Lease Management</h2>
+
+    <div class="form-grid">
+        <div>
+            <label for="leaseTenant">Tenant</label>
+            <select id="leaseTenant">
+                <option value="">Select tenant</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="leaseStartDate">Lease Start Date</label>
+            <input type="date" id="leaseStartDate">
+        </div>
+
+        <div>
+            <label for="leaseEndDate">Lease End Date</label>
+            <input type="date" id="leaseEndDate">
+        </div>
+
+        <div>
+            <label for="leaseRent">Monthly Rent (UGX)</label>
+            <input type="number" id="leaseRent" min="0" placeholder="500000">
+        </div>
+    </div>
+
+    <button type="button" onclick="saveLease()">Save Lease</button>
+
+    <div id="leaseList">
+        <p class="empty">No leases recorded yet.</p>
+    </div>
+</section>
+    <section class="section">
     <h2>Payment History</h2>
     <div id="paymentHistory">
         <p class="empty">No payments recorded yet.</p>
@@ -1483,6 +1516,100 @@ escapeHtml(tenant.leaseEndDate || "") + "</p>" +
     });
 }
 
+    function populateLeaseTenants() {
+    const select = document.getElementById("leaseTenant");
+    if (!select) return;
+
+    const tenants = readArray("tenants");
+
+    select.innerHTML = '<option value="">Select tenant</option>';
+
+    tenants.forEach(function(tenant) {
+        if (tenant.status === "Active") {
+            const option = document.createElement("option");
+            option.value = String(tenant.id);
+            option.textContent =
+                tenant.name +
+                " - " +
+                (tenant.propertyName || "No Property") +
+                (tenant.unit ? " / Unit " + tenant.unit : "");
+
+            select.appendChild(option);
+        }
+    });
+}
+
+function saveLease() {
+    const tenantId = document.getElementById("leaseTenant").value;
+    const startDate = document.getElementById("leaseStartDate").value;
+    const endDate = document.getElementById("leaseEndDate").value;
+    const monthlyRent = Number(document.getElementById("leaseRent").value);
+
+    if (!tenantId || !startDate || !endDate || !monthlyRent) {
+        alert("Please complete all lease fields.");
+        return;
+    }
+
+    if (endDate <= startDate) {
+        alert("Lease end date must be after the start date.");
+        return;
+    }
+
+    const leases = readArray("leases");
+
+    leases.push({
+        id: makeId(),
+        tenantId: tenantId,
+        startDate: startDate,
+        endDate: endDate,
+        monthlyRent: monthlyRent,
+        status: "Active",
+        createdAt: new Date().toISOString()
+    });
+
+    saveArray("leases", leases);
+
+    document.getElementById("leaseStartDate").value = "";
+    document.getElementById("leaseEndDate").value = "";
+    document.getElementById("leaseRent").value = "";
+    document.getElementById("leaseTenant").value = "";
+
+    displayLeases();
+    alert("Lease saved successfully.");
+}
+
+function displayLeases() {
+    const container = document.getElementById("leaseList");
+    if (!container) return;
+
+    const leases = readArray("leases");
+    const tenants = readArray("tenants");
+
+    if (!leases.length) {
+        container.innerHTML = '<p class="empty">No leases recorded yet.</p>';
+        return;
+    }
+
+    container.innerHTML = "";
+
+    leases.forEach(function(lease) {
+        const tenant = tenants.find(function(t) {
+            return sameId(t.id, lease.tenantId);
+        });
+
+        const div = document.createElement("div");
+        div.className = "card";
+
+        div.innerHTML =
+            "<h3>" + escapeHtml(tenant ? tenant.name : "Unknown Tenant") + "</h3>" +
+            "<p><strong>Lease Start:</strong> " + escapeHtml(lease.startDate) + "</p>" +
+            "<p><strong>Lease End:</strong> " + escapeHtml(lease.endDate) + "</p>" +
+            "<p><strong>Monthly Rent:</strong> " + money(lease.monthlyRent) + "</p>" +
+            "<p><strong>Status:</strong> " + escapeHtml(lease.status) + "</p>";
+
+        container.appendChild(div);
+    });
+}
     function printReceipt(paymentId) {
     const payments = readArray("payments");
 
