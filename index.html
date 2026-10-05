@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en">F
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1367,6 +1367,31 @@ payment.id +
 
         const statusClass =
             tenant.status === "Active" ? "active" : "inactive";
+        const payments = readArray("payments");
+const currentMonth = new Date().toISOString().slice(0, 7);
+
+const tenantPaid = payments
+    .filter(function(payment) {
+        return sameId(payment.tenantId, tenant.id) &&
+               String(payment.date || "").slice(0, 7) === currentMonth;
+    })
+    .reduce(function(total, payment) {
+        return total + (Number(payment.amount) || 0);
+    }, 0);
+
+const monthlyRent = Number(tenant.monthlyRent) || 0;
+const dueDay = Number(tenant.dueDate) || 1;
+
+let rentStatus = "Not Due";
+
+if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
+    rentStatus = "Paid";
+} else if (tenantPaid > 0) {
+    rentStatus = "Partial";
+} else if (new Date().getDate() > dueDay) {
+    rentStatus = "Overdue";
+}
+        
 
         div.innerHTML =
             "<h3>" + escapeHtml(tenant.name) + "</h3>" +
@@ -1387,6 +1412,7 @@ payment.id +
             "<p><strong>Status:</strong> " +
             "<span class='badge " + statusClass + "'>" +
             escapeHtml(tenant.status) + "</span></p>" +
+            "<p><strong>Rent Status:</strong> " + escapeHtml(rentStatus) + "</p>" +
 
             "<div>" +
             "<button type='button' onclick=\"viewTenant('" +
