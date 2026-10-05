@@ -1084,6 +1084,19 @@ function recordPayment() {
 
     if (!paymentDate) return;
 
+    const paymentMethod = prompt(
+    "Enter payment method (Cash, Mobile Money, Bank, Other):",
+    "Mobile Money"
+);
+
+if (paymentMethod === null || !paymentMethod.trim()) return;
+
+const reference = prompt(
+    "Enter payment reference / receipt number:",
+    ""
+);
+
+if (reference === null) return;
     const payments = data.payments;
 
     const payment = {
@@ -1318,7 +1331,15 @@ function displayPaymentHistory(payments) {
             "</p>" +
             "<p><strong>Date:</strong> " +
             escapeHtml(payment.date || "") +
-            "</p>";
+            "</p>" +
+
+    "<p><strong>Payment Method:</strong> " +
+    escapeHtml(payment.paymentMethod || "Not specified") +
+    "</p>" +
+
+    "<p><strong>Reference / Receipt No:</strong> " +
+    escapeHtml(payment.reference || "Not specified") +
+    "</p>";
 
         container.appendChild(div);
     });
