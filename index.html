@@ -1415,7 +1415,7 @@ if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
             "<span class='badge " + statusClass + "'>" +
             escapeHtml(tenant.status) + "</span></p>" +
             "<p><strong>Balance:</strong> " + money(tenantBalance) + "</p>" +
-            "<p><strong>Rent Status:</strong> " + escapeHtml(rentStatus) + "</p>" +
+           "<p><strong>Rent Status:</strong> <span class=\"badge " + String(rentStatus).toLowerCase() + "\">" + escapeHtml(rentStatus) + "</span></p>" +
 
             "<div>" +
             "<button type='button' onclick=\"viewTenant('" +
