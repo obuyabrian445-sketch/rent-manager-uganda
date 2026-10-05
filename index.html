@@ -1416,6 +1416,8 @@ if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
             money(tenant.monthlyRent) + "</p>" +
             "<p><strong>Move-in Date:</strong> " +
             escapeHtml(tenant.moveInDate || "") + "</p>" +
+            "<p><strong>Lease End Date:</strong> " +
+escapeHtml(tenant.leaseEndDate || "") + "</p>" +
             "<p><strong>Rent Due Day:</strong> " +
             escapeHtml(tenant.dueDate) + "</p>" +
             "<p><strong>Security Deposit:</strong> " +
