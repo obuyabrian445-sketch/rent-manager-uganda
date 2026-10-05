@@ -1094,7 +1094,9 @@ function recordPayment() {
         date: paymentDate,
         propertyId: tenant.propertyId,
         propertyName: tenant.propertyName,
-        room: tenant.room
+        room: tenant.room,
+        paymentMethod: paymentMethod.trim(),
+reference: reference.trim()
     };
 
     payments.push(payment);
