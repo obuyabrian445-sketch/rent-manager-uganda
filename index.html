@@ -1414,7 +1414,94 @@ function displayPaymentHistory(payments) {
     });
 }
 
-/* =========================================================
+    function printReceipt(paymentId) {
+    const payments = readArray("payments");
+
+    const payment = payments.find(function(p) {
+        return sameId(p.id, paymentId);
+    });
+
+    if (!payment) {
+        alert("Payment not found.");
+        return;
+    }
+
+    const receiptWindow = window.open(
+        "",
+        "_blank",
+        "width=700,height=800"
+    );
+
+    if (!receiptWindow) {
+        alert("Please allow pop-ups to print the receipt.");
+        return;
+    }
+
+    receiptWindow.document.write(
+        "<html><head><title>Rent Payment Receipt</title>" +
+        "<style>" +
+        "body{font-family:Arial,sans-serif;padding:40px;max-width:650px;margin:auto;}" +
+        "h1{color:#0b5ed7;margin-bottom:5px;}" +
+        "h2{margin-top:30px;}" +
+        ".row{margin:12px 0;font-size:16px;}" +
+        "strong{display:inline-block;width:180px;}" +
+        ".amount{font-size:22px;font-weight:bold;margin-top:20px;}" +
+        "hr{margin:25px 0;}" +
+        "</style></head><body>" +
+
+        "<h1>Rent Manager Uganda</h1>" +
+        "<p>Official Rent Payment Receipt</p>" +
+
+        "<hr>" +
+
+        "<div class='row'><strong>Receipt No:</strong> " +
+        escapeHtml(payment.reference || payment.id) +
+        "</div>" +
+
+        "<div class='row'><strong>Payment Date:</strong> " +
+        escapeHtml(payment.date || "") +
+        "</div>" +
+
+        "<div class='row'><strong>Tenant:</strong> " +
+        escapeHtml(payment.tenantName || "") +
+        "</div>" +
+
+        "<div class='row'><strong>Property:</strong> " +
+        escapeHtml(payment.propertyName || "") +
+        "</div>" +
+
+        "<div class='row'><strong>Unit:</strong> " +
+        escapeHtml(payment.room || "") +
+        "</div>" +
+
+        "<div class='row amount'><strong>Amount Paid:</strong> " +
+        money(payment.amount) +
+        "</div>" +
+
+        "<div class='row'><strong>Payment Method:</strong> " +
+        escapeHtml(payment.paymentMethod || "Not specified") +
+        "</div>" +
+
+        "<div class='row'><strong>Reference:</strong> " +
+        escapeHtml(payment.reference || "Not specified") +
+        "</div>" +
+
+        "<hr>" +
+
+        "<p>Thank you for your payment.</p>" +
+
+        "<script>" +
+        "window.onload=function(){window.print();};" +
+        "<\/script>" +
+
+        "</body></html>"
+    );
+
+    receiptWindow.document.close();
+}
+
+
+    /* =========================================================
    START APPLICATION
    ========================================================= */
 
