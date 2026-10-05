@@ -1339,7 +1339,10 @@ function displayPaymentHistory(payments) {
 
     "<p><strong>Reference / Receipt No:</strong> " +
     escapeHtml(payment.reference || "Not specified") +
-    "</p>";
+    "</p>" +
+"<button type='button' onclick=\"printReceipt('" +
+payment.id +
+"')\">Print Receipt</button>";
 
         container.appendChild(div);
     });
