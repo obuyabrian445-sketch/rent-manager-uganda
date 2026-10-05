@@ -1391,6 +1391,7 @@ if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
 } else if (new Date().getDate() > dueDay) {
     rentStatus = "Overdue";
 }
+        const tenantBalance = Math.max(monthlyRent - tenantPaid, 0);
         
 
         div.innerHTML =
@@ -1412,6 +1413,7 @@ if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
             "<p><strong>Status:</strong> " +
             "<span class='badge " + statusClass + "'>" +
             escapeHtml(tenant.status) + "</span></p>" +
+            "<p><strong>Balance:</strong> " + money(tenantBalance) + "</p>" +
             "<p><strong>Rent Status:</strong> " + escapeHtml(rentStatus) + "</p>" +
 
             "<div>" +
