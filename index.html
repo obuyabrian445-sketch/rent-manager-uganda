@@ -236,6 +236,12 @@
         </div>
     </section>
 
+<section class="section">
+    <h2>Payment History</h2>
+    <div id="paymentHistory">
+        <p class="empty">No payments recorded yet.</p>
+    </div>
+</section>
 </main>
 
 <footer>
@@ -498,6 +504,7 @@ function loadDashboard() {
 
     displayProperties(properties, tenants);
     displayTenants(tenants);
+    displayPaymentHistory(payments);
 }
 
 /* =========================================================
@@ -1285,7 +1292,36 @@ function assignToSpecificUnit(propertyId, unitNumber) {
    DISPLAY TENANTS
    ========================================================= */
 
-function displayTenants(tenants) {
+function displayPaymentHistory(payments) {
+    const container = document.getElementById("paymentHistory");
+
+    if (payments.length === 0) {
+        container.innerHTML =
+            '<p class="empty">No payments recorded yet.</p>';
+        return;
+    }
+
+    container.innerHTML = "";
+
+    payments.forEach(function(payment) {
+        const div = document.createElement("div");
+        div.className = "payment-card";
+
+        div.innerHTML =
+            "<p><strong>Tenant:</strong> " +
+            escapeHtml(payment.tenantName || "Unknown") +
+            "</p>" +
+            "<p><strong>Amount:</strong> " +
+            money(payment.amount) +
+            "</p>" +
+            "<p><strong>Date:</strong> " +
+            escapeHtml(payment.date || "") +
+            "</p>";
+
+        container.appendChild(div);
+    });
+}
+    function displayTenants(tenants) {
     const container = document.getElementById("tenantList");
 
     if (tenants.length === 0) {
