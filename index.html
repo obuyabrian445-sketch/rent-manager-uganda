@@ -697,6 +697,8 @@ function addTenant() {
 
     const moveInDate = prompt("Enter move-in date (YYYY-MM-DD):");
     if (!moveInDate) return;
+    const leaseEndDate = prompt("Enter lease end date (YYYY-MM-DD):");
+if (!leaseEndDate) return;
 
     const dueDate = prompt("Enter rent due day (1-31):", "1");
 
@@ -725,6 +727,7 @@ function addTenant() {
         room: unit,
         monthlyRent: Number(monthlyRent),
         moveInDate: moveInDate,
+        leaseEndDate: leaseEndDate,
         dueDate: Number(dueDate),
         deposit: Number(deposit),
         status: "Active",
@@ -813,6 +816,8 @@ function editTenant(tenantId) {
 
     const moveInDate = prompt("Move-in date (YYYY-MM-DD):", tenant.moveInDate);
     if (moveInDate === null || !moveInDate.trim()) return;
+    const leaseEndDate = prompt("Lease end date (YYYY-MM-DD):", tenant.leaseEndDate || "");
+if (leaseEndDate === null || !leaseEndDate.trim()) return;
 
     const dueDate = prompt("Rent due day (1-31):", tenant.dueDate);
     if (dueDate === null ||
@@ -834,6 +839,7 @@ function editTenant(tenantId) {
     tenant.phone = phone.trim();
     tenant.monthlyRent = Number(rent);
     tenant.moveInDate = moveInDate.trim();
+    tenant.leaseEndDate = leaseEndDate.trim();
     tenant.dueDate = Number(dueDate);
     tenant.deposit = Number(deposit);
 
