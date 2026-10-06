@@ -854,6 +854,9 @@ function editTenant(tenantId) {
 
     const phone = prompt("Tenant phone number:", tenant.phone);
     if (phone === null) return;
+    const identificationType = prompt("Identification type (National ID / Passport / Driving Licence / Other):", tenant.identificationType || "");
+const identificationNumber = prompt("Identification number:", tenant.identificationNumber || "");
+   if (identificationType === null || identificationNumber === null) return;
 
     const rent = prompt("Monthly rent in UGX:", tenant.monthlyRent);
     if (rent === null || rent === "" || isNaN(rent) || Number(rent) < 0) {
@@ -884,6 +887,8 @@ if (leaseEndDate === null || !leaseEndDate.trim()) return;
 
     tenant.name = name.trim();
     tenant.phone = phone.trim();
+    tenant.identificationType = identificationType.trim();
+tenant.identificationNumber = identificationNumber.trim();
     tenant.monthlyRent = Number(rent);
     tenant.moveInDate = moveInDate.trim();
     tenant.leaseEndDate = leaseEndDate.trim();
