@@ -1478,6 +1478,10 @@ if (leaseEndDate) {
             "<h3>" + escapeHtml(tenant.name) + "</h3>" +
             "<p><strong>Phone:</strong> " +
             escapeHtml(tenant.phone) + "</p>" +
+            "<p><strong>Identification Type:</strong> " +
+escapeHtml(tenant.identificationType || "") + "</p>" +
+"<p><strong>Identification Number:</strong> " +
+escapeHtml(tenant.identificationNumber || "") + "</p>" +
             "<p><strong>Property:</strong> " +
             escapeHtml(tenant.propertyName || "Unknown") + "</p>" +
             "<p><strong>Unit:</strong> " +
