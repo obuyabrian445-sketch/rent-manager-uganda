@@ -386,6 +386,8 @@ function synchronizeData() {
         tenant.id = tenant.id || makeId("tenant");
         tenant.name = String(tenant.name || "").trim();
         tenant.phone = String(tenant.phone || "").trim();
+                tenant.identificationType = String(tenant.identificationType || "").trim();
+        tenant.identificationNumber = String(tenant.identificationNumber || "").trim();
         tenant.room = normalizeUnit(tenant.room);
         tenant.propertyId = tenant.propertyId;
         tenant.status = tenant.status || "Active";
@@ -640,7 +642,14 @@ function addTenant() {
     if (!tenantName) return;
 
     const phone = prompt("Enter tenant phone number:");
-    if (phone === null) return;
+    if (phone === null) return;    const identificationType = prompt(
+        "Enter identification type (National ID / Passport / Driving Licence / Other):"
+    );
+    if (identificationType === null || identificationType.trim() === "") return;
+
+    const identificationNumber = prompt("Enter identification number:");
+    if (identificationNumber === null || identificationNumber.trim() === "") return;
+    
 
     let propertyMessage = "Select property by entering its number:\n\n";
 
@@ -756,6 +765,8 @@ if (!leaseEndDate) return;
         id: makeId("tenant"),
         name: String(tenantName).trim(),
         phone: String(phone).trim(),
+                identificationType: String(identificationType).trim(),
+        identificationNumber: String(identificationNumber).trim(),
         propertyId: property.id,
         propertyName: property.name,
         room: unit,
@@ -808,6 +819,8 @@ function viewTenant(tenantId) {
         "TENANT DETAILS\n\n" +
         "Name: " + tenant.name +
         "\nPhone: " + tenant.phone +
+                    "\nIdentification Type: " + tenant.identificationType +
+            "\nIdentification Number: " + tenant.identificationNumber +
         "\nProperty: " + tenant.propertyName +
         "\nUnit: " + tenant.room +
         "\nMonthly Rent: " + money(tenant.monthlyRent) +
