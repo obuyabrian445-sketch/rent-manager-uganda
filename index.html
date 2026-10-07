@@ -792,7 +792,159 @@ if (!leaseEndDate) return;
     );
 }
 
-/* =========================================================
+/* ============================================================
+   REPORTS
+============================================================ */
+function generateReports() {
+    const properties = readArray("properties");
+    const tenants = readArray("tenants");
+    const payments = readArray("payments");
+    const leases = readArray("leases");
+
+    let totalUnits = 0;
+    let occupiedUnits = 0;
+
+    properties.forEach(function(property) {
+        ensurePropertyUnits(property);
+
+        const units = Array.isArray(property.unitList)
+            ? property.unitList
+            : [];
+
+        totalUnits += units.length;
+
+        units.forEach(function(unit) {
+            if (unit.status === "Occupied") {
+                occupiedUnits++;
+            }
+        });
+    });
+
+    const vacantUnits = Math.max(totalUnits - occupiedUnits, 0);
+
+    const activeTenants = tenants.filter(function(tenant) {
+        return tenant.status === "Active";
+    });
+
+    const totalCollected = payments.reduce(function(total, payment) {
+        return total + (Number(payment.amount) || 0);
+    }, 0);
+
+    const currentMonth = new Date().toISOString().slice(0, 7);
+
+    const monthlyExpectedRent = activeTenants.reduce(function(total, tenant) {
+        return total + (Number(tenant.monthlyRent) || 0);
+    }, 0);
+
+    const monthlyCollected = payments
+        .filter(function(payment) {
+            return String(payment.date || "").slice(0, 7) === currentMonth;
+        })
+        .reduce(function(total, payment) {
+            return total + (Number(payment.amount) || 0);
+        }, 0);
+
+    const outstandingRent = Math.max(
+        monthlyExpectedRent - monthlyCollected,
+        0
+    );
+
+    const overdueTenants = activeTenants.filter(function(tenant) {
+        const rent = Number(tenant.monthlyRent) || 0;
+        const dueDay = Number(tenant.dueDate) || 1;
+
+        const paidThisMonth = payments
+            .filter(function(payment) {
+                return sameId(payment.tenantId, tenant.id) &&
+                    String(payment.date || "").slice(0, 7) === currentMonth;
+            })
+            .reduce(function(total, payment) {
+                return total + (Number(payment.amount) || 0);
+            }, 0);
+
+        return rent > 0 &&
+            paidThisMonth < rent &&
+            new Date().getDate() > dueDay;
+    });
+
+    const activeLeases = leases.filter(function(lease) {
+        return lease.status === "Active" || !lease.status;
+    });
+
+    const reportDetails = document.getElementById("reportDetails");
+
+    if (!reportDetails) {
+        return;
+    }
+
+    reportDetails.innerHTML =
+        "<div class=\"report-grid\">" +
+
+        "<div>" +
+        "<strong>Total Properties</strong>" +
+        "<p>" + properties.length + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Total Units</strong>" +
+        "<p>" + totalUnits + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Occupied Units</strong>" +
+        "<p>" + occupiedUnits + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Vacant Units</strong>" +
+        "<p>" + vacantUnits + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Active Tenants</strong>" +
+        "<p>" + activeTenants.length + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Active Leases</strong>" +
+        "<p>" + activeLeases.length + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Rent Collected This Month</strong>" +
+        "<p>" + money(monthlyCollected) + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Outstanding Rent</strong>" +
+        "<p>" + money(outstandingRent) + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Overdue Tenants</strong>" +
+        "<p>" + overdueTenants.length + "</p>" +
+        "</div>" +
+
+        "<div>" +
+        "<strong>Total Rent Collected</strong>" +
+        "<p>" + money(totalCollected) + "</p>" +
+        "</div>" +
+
+        "</div>" +
+
+        "<h3>Overdue Tenant Details</h3>" +
+
+        (overdueTenants.length === 0
+            ? "<p class=\"empty\">No overdue tenants.</p>"
+            : overdueTenants.map(function(tenant) {
+                return "<p>" +
+                    "<strong>" + escapeHtml(tenant.name) + "</strong>" +
+                    " — " +
+                    money(Number(tenant.monthlyRent) || 0) +
+                    "</p>";
+            }).join(""));
+}
+    /* =========================================================
    VIEW TENANT
    ========================================================= */
 
