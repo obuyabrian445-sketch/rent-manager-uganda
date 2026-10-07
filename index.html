@@ -353,6 +353,36 @@
     </div>
 </section>
 
+<section class="section">
+    <h2>Maintenance Requests</h2>
+
+    <label for="maintenanceTenant">Tenant</label>
+    <select id="maintenanceTenant">
+        <option value="">Select tenant</option>
+    </select>
+
+    <label for="maintenanceDate">Date Reported</label>
+    <input type="date" id="maintenanceDate">
+
+    <label for="maintenanceIssue">Issue Description</label>
+    <textarea id="maintenanceIssue" rows="4" placeholder="Describe the maintenance problem"></textarea>
+
+    <label for="maintenancePriority">Priority</label>
+    <select id="maintenancePriority">
+        <option value="Low">Low</option>
+        <option value="Medium" selected>Medium</option>
+        <option value="High">High</option>
+        <option value="Urgent">Urgent</option>
+    </select>
+
+    <button type="button" class="primary" onclick="submitMaintenanceRequest()">
+        Submit Maintenance Request
+    </button>
+
+    <div id="maintenanceRequests">
+        <p class="empty">No maintenance requests recorded yet.</p>
+    </div>
+</section>
 </main>
 
 <footer>
@@ -621,6 +651,8 @@ function loadDashboard() {
     displayTenants(tenants);
     displayPaymentHistory(payments);
     populateLeaseTenants();
+    populateMaintenanceTenants();
+displayMaintenanceRequests();
 }
 
 /* =========================================================
@@ -1827,7 +1859,101 @@ rentReminder ? "<p><strong>Rent Reminder:</strong> " + escapeHtml(rentReminder) 
         }
     });
 }
+function populateMaintenanceTenants() {
+    const select = document.getElementById("maintenanceTenant");
+    if (!select) return;
 
+    const tenants = readArray("tenants");
+
+    select.innerHTML = '<option value="">Select tenant</option>';
+
+    tenants.forEach(function(tenant) {
+        if (tenant.status === "Active") {
+            const option = document.createElement("option");
+            option.value = String(tenant.id);
+            option.textContent =
+                tenant.name +
+                " - " +
+                (tenant.propertyName || "Property") +
+                (tenant.unit ? " / Unit " + tenant.unit : "");
+
+            select.appendChild(option);
+        }
+    });
+}
+
+function submitMaintenanceRequest() {
+    const tenantId = document.getElementById("maintenanceTenant").value;
+    const date = document.getElementById("maintenanceDate").value;
+    const issue = document.getElementById("maintenanceIssue").value.trim();
+    const priority = document.getElementById("maintenancePriority").value;
+
+    if (!tenantId || !date || !issue) {
+        alert("Please complete the tenant, date, and issue description fields.");
+        return;
+    }
+
+    const requests = readArray("maintenanceRequests");
+
+    requests.push({
+        id: Date.now(),
+        tenantId: tenantId,
+        date: date,
+        issue: issue,
+        priority: priority,
+        status: "Open"
+    });
+
+    localStorage.setItem("maintenanceRequests", JSON.stringify(requests));
+
+    document.getElementById("maintenanceIssue").value = "";
+    document.getElementById("maintenancePriority").value = "Medium";
+
+    displayMaintenanceRequests();
+    alert("Maintenance request submitted successfully.");
+}
+
+function displayMaintenanceRequests() {
+    const container = document.getElementById("maintenanceRequests");
+    if (!container) return;
+
+    const requests = readArray("maintenanceRequests");
+    const tenants = readArray("tenants");
+
+    if (requests.length === 0) {
+        container.innerHTML =
+            '<p class="empty">No maintenance requests recorded yet.</p>';
+        return;
+    }
+
+    container.innerHTML = requests
+        .slice()
+        .reverse()
+        .map(function(request) {
+            const tenant = tenants.find(function(item) {
+                return String(item.id) === String(request.tenantId);
+            });
+
+            const tenantName = tenant
+                ? tenant.name
+                : "Unknown Tenant";
+
+            return (
+                '<div class="card">' +
+                    '<h3>' + escapeHtml(tenantName) + '</h3>' +
+                    '<p><strong>Date Reported:</strong> ' +
+                        escapeHtml(request.date) + '</p>' +
+                    '<p><strong>Issue:</strong> ' +
+                        escapeHtml(request.issue) + '</p>' +
+                    '<p><strong>Priority:</strong> ' +
+                        escapeHtml(request.priority) + '</p>' +
+                    '<p><strong>Status:</strong> ' +
+                        escapeHtml(request.status) + '</p>' +
+                '</div>'
+            );
+        })
+        .join("");
+}
 function saveLease() {
     const tenantId = document.getElementById("leaseTenant").value;
     const startDate = document.getElementById("leaseStartDate").value;
