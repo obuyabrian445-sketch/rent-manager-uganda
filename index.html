@@ -352,6 +352,17 @@
         <p class="empty">Click Refresh Reports to generate the latest report.</p>
     </div>
 </section>
+<section class="section">
+    <h2>Reports</h2>
+
+    <button type="button" class="primary" onclick="generateReports()">
+        Refresh Reports
+    </button>
+
+    <div id="reportDetails">
+        <p class="empty">Click Refresh Reports to generate the latest report.</p>
+    </div>
+</section>
 </main>
 
 <footer>
@@ -1985,6 +1996,84 @@ function displayLeases() {
 }
 
 
+    function displayRentReminders() {
+    const container = document.getElementById("rentReminders");
+
+    if (!container) {
+        return;
+    }
+
+    const tenants = readArray("tenants");
+    const payments = readArray("payments");
+    const today = new Date();
+    const currentMonth = today.toISOString().slice(0, 7);
+
+    const reminders = tenants
+        .filter(function(tenant) {
+            return tenant.status === "Active";
+        })
+        .map(function(tenant) {
+            const rent = Number(tenant.monthlyRent) || 0;
+            const dueDay = Number(tenant.dueDate) || 1;
+
+            const paidThisMonth = payments
+                .filter(function(payment) {
+                    return sameId(payment.tenantId, tenant.id) &&
+                        String(payment.date || "").slice(0, 7) === currentMonth;
+                })
+                .reduce(function(total, payment) {
+                    return total + (Number(payment.amount) || 0);
+                }, 0);
+
+            const dueDate = new Date(
+                today.getFullYear(),
+                today.getMonth(),
+                dueDay
+            );
+
+            const daysUntilDue = Math.ceil(
+                (dueDate - today) / (1000 * 60 * 60 * 24)
+            );
+
+            let status = "Due Soon";
+
+            if (paidThisMonth >= rent && rent > 0) {
+                status = "Paid";
+            } else if (daysUntilDue < 0) {
+                status = "Overdue";
+            } else if (daysUntilDue === 0) {
+                status = "Due Today";
+            }
+
+            return {
+                tenant: tenant,
+                rent: rent,
+                dueDay: dueDay,
+                paidThisMonth: paidThisMonth,
+                daysUntilDue: daysUntilDue,
+                status: status
+            };
+        });
+
+    container.innerHTML = reminders
+        .filter(function(item) {
+            return item.status !== "Paid";
+        })
+        .map(function(item) {
+            return "<div class=\"reminder-item\">" +
+                "<strong>" + escapeHtml(item.tenant.name) + "</strong>" +
+                "<span>" + item.status + "</span>" +
+                "<p>Rent: " + money(item.rent) +
+                " | Due day: " + item.dueDay + "</p>" +
+                "</div>";
+        })
+        .join("");
+
+    if (container.innerHTML === "") {
+        container.innerHTML =
+            "<p class=\"empty\">No rent reminders at this time.</p>";
+    }
+}
     /* =========================================================
    START APPLICATION
    ========================================================= */
