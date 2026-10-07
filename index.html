@@ -1453,6 +1453,39 @@ if (monthlyRent > 0 && tenantPaid >= monthlyRent) {
 } else if (new Date().getDate() > dueDay) {
     rentStatus = "Overdue";
 }
+        const today = new Date();
+const daysInCurrentMonth = new Date(
+    today.getFullYear(),
+    today.getMonth() + 1,
+    0
+).getDate();
+
+const reminderDueDay = Math.min(dueDay, daysInCurrentMonth);
+const dueDateThisMonth = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    reminderDueDay
+);
+
+let rentReminder = "";
+
+if (rentStatus === "Paid") {
+    rentReminder = "Rent paid for this month";
+} else if (rentStatus === "Overdue") {
+    rentReminder = "Rent is overdue";
+} else {
+    const daysUntilDue = Math.ceil(
+        (dueDateThisMonth - today) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysUntilDue === 0) {
+        rentReminder = "Rent is due today";
+    } else if (daysUntilDue > 0 && daysUntilDue <= 3) {
+        rentReminder =
+            "Rent is due in " + daysUntilDue +
+            (daysUntilDue === 1 ? " day" : " days");
+    }
+}
         const leaseEndDate = String(tenant.leaseEndDate || "").trim();
 let leaseStatus = "No Lease Date";
 
@@ -1506,7 +1539,7 @@ escapeHtml(tenant.leaseEndDate || "") + "</p>" +
             escapeHtml(tenant.status) + "</span></p>" +
             "<p><strong>Balance:</strong> " + money(tenantBalance) + "</p>" +
            "<p><strong>Rent Status:</strong> <span class=\"badge " + String(rentStatus).toLowerCase() + "\">" + escapeHtml(rentStatus) + "</span></p>" +
-
+rentReminder ? "<p><strong>Rent Reminder:</strong> " + escapeHtml(rentReminder) + "</p>" : "" +
             "<div>" +
             "<button type='button' onclick=\"viewTenant('" +
             String(tenant.id).replace(/'/g, "\\'") +
