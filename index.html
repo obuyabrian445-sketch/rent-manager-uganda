@@ -921,6 +921,9 @@ function generateReports() {
         monthlyExpectedRent - monthlyCollected,
         0
     );
+    const collectionPercentage = monthlyExpectedRent > 0
+    ? Math.round((monthlyCollected / monthlyExpectedRent) * 100)
+    : 0;
 
     const overdueTenants = activeTenants.filter(function(tenant) {
         const rent = Number(tenant.monthlyRent) || 0;
@@ -1002,6 +1005,10 @@ function generateReports() {
         "<strong>Total Rent Collected</strong>" +
         "<p>" + money(totalCollected) + "</p>" +
         "</div>" +
+        "<div>" +
+"<strong>Collection Rate</strong>" +
+"<p>" + collectionPercentage + "%</p>" +
+"</div>" +
 
         "</div>" +
 
