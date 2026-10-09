@@ -2196,6 +2196,45 @@ function displayLeases() {
 
 loadDashboard();
 
+    ```javascript
+// EXPENSE TRACKING
+function recordExpense() {
+    const date = document.getElementById("expenseDate").value;
+    const category = document.getElementById("expenseCategory").value;
+    const property = document.getElementById("expenseProperty").value;
+    const amount = Number(document.getElementById("expenseAmount").value);
+    const description = document.getElementById("expenseDescription").value.trim();
+
+    if (!date || !category || !property || !amount || amount <= 0) {
+        alert("Please enter the date, category, property, and a valid amount.");
+        return;
+    }
+
+    const expenses = JSON.parse(localStorage.getItem("expenses") || "[]");
+
+    expenses.push({
+        id: Date.now(),
+        date: date,
+        category: category,
+        property: property,
+        amount: amount,
+        description: description
+    });
+
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+
+    document.getElementById("expenseAmount").value = "";
+    document.getElementById("expenseDescription").value = "";
+
+    if (typeof loadExpenses === "function") {
+        loadExpenses();
+    }
+
+    alert("Expense recorded successfully.");
+}
+
+
+
 </script>
 
 </body>
